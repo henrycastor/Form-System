@@ -26,6 +26,15 @@ async function handleApiCall<T>(
 ): Promise<T> {
 	try {
 		const response = await fn();
+
+		// Handle 401 Unauthorized - redirect to login
+		if (response.status === 401) {
+			if (typeof window !== 'undefined') {
+				window.location.href = '/login';
+			}
+			throw new Error('Session expired. Redirecting to login...');
+		}
+
 		const data = await response.json() as T;
 
 		if (!response.ok) {
@@ -50,7 +59,7 @@ export async function submitForm(data: SubmissionData): Promise<SubmissionRespon
 	return handleApiCall(
 		() => fetch("/api/submissions", {
 			method: "POST",
-			headers: { 
+			headers: {
 				"Content-Type": "application/json",
 				"Accept": "application/json"
 			},
