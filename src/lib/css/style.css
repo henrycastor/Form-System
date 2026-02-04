@@ -1,0 +1,21 @@
+/* ==========================================================================
+   Main Stylesheet - Modularized
+   ========================================================================== */
+
+/* Design Tokens & Variables */
+@import url('_variables.css');
+
+/* Base Styles & Resets */
+@import url('_base.css');
+
+/* Layout Components (Header, Footer, Main) */
+@import url('_layout.css');
+
+/* Reusable UI Components (Buttons, Cards, Inputs, Modals) */
+@import url('_components.css');
+
+/* Page-specific Layouts */
+@import url('_pages.css');
+
+/* Utilities, Responsive & Print Styles */
+@import url('_utils.css');

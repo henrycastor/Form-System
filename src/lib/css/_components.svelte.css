@@ -1,0 +1,384 @@
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+.form-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    transition: var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    width: 100%;
+}
+
+.form-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    opacity: 0.9;
+    color: var(--white);
+}
+
+.form-btn i {
+    margin-left: var(--spacing-sm);
+    transition: var(--transition-normal);
+}
+
+.form-btn:hover i {
+    transform: translateX(5px);
+}
+
+.back-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: var(--spacing-xl);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-admin {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-admin:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 86, 166, 0.2);
+    color: var(--white);
+}
+
+.btn-admin.refresh {
+    background-color: var(--accent-color);
+}
+
+.btn-admin.export {
+    background-color: var(--success-color);
+}
+
+.btn-admin.filter {
+    background-color: #6c757d;
+}
+
+.btn-action {
+    padding: 8px var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-action.view {
+    background-color: var(--accent-bg-light);
+    color: var(--accent-color);
+    border-color: rgba(52, 181, 229, 0.3);
+}
+
+.btn-action.view:hover {
+    background-color: var(--accent-color);
+    color: var(--white);
+}
+
+.btn-action.delete {
+    background-color: var(--danger-bg);
+    color: var(--danger-color);
+    border-color: rgba(220, 53, 69, 0.3);
+}
+
+.btn-action.delete:hover {
+    background-color: var(--danger-color);
+    color: var(--white);
+}
+
+/* ==========================================================================
+   FORM COMPONENTS & QUESTIONS
+   ========================================================================== */
+.question-container {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-normal);
+}
+
+.question-container:hover {
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-md);
+}
+
+.question-title {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.radio-group {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease;
+}
+
+.radio-option:hover {
+    background-color: var(--light-bg);
+}
+
+.radio-option input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-circle);
+    border: 2px solid #ccc;
+    margin-right: var(--spacing-sm);
+    position: relative;
+    transition: var(--transition-normal);
+}
+
+.radio-option input[type="radio"]:checked+.radio-custom {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.radio-option input[type="radio"]:checked+.radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-circle);
+    background-color: var(--white);
+}
+
+.radio-label {
+    font-weight: 500;
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.text-area-container textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.text-area-container textarea:focus {
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(52, 181, 229, 0.1);
+}
+
+/* Question Header (used in view) */
+.question-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.question-number {
+    background-color: var(--primary-color);
+    color: var(--white);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-circle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+}
+
+.question-text {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.4;
+}
+
+.answer-container {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.answer-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+}
+
+.answer-value {
+    color: var(--text-main);
+    line-height: 1.6;
+    font-size: 1.1rem;
+    padding: var(--spacing-md);
+    background-color: var(--light-bg);
+    border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   BADGES & STATUS
+   ========================================================================== */
+.form-badge {
+    display: inline-block;
+    padding: 5px var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-badge.form1 {
+    background-color: var(--primary-bg-light);
+    color: var(--primary-color);
+    border: 1px solid rgba(0, 86, 166, 0.2);
+}
+
+.form-badge.form2 {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.form-badge.form3 {
+    background-color: var(--warning-bg);
+    color: #856404;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.status-cell,
+.status-badge {
+    font-weight: 600;
+}
+
+.status-cell.completed,
+.status-badge.completed {
+    color: var(--success-color);
+    background-color: var(--success-bg);
+    padding: 5px var(--spacing-md);
+    border-radius: var(--radius-full);
+}
+
+.status-cell.pending,
+.status-badge.pending {
+    color: var(--secondary-color);
+    background-color: var(--secondary-bg);
+    padding: 5px var(--spacing-md);
+    border-radius: var(--radius-full);
+}
+
+/* ==========================================================================
+   TABLES (DataTables overrides)
+   ========================================================================== */
+.table.dataTable thead th {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: var(--spacing-md) var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.table.dataTable tbody td {
+    padding: var(--spacing-md) var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   MODALS
+   ========================================================================== */
+.modal-content {
+    border-radius: var(--radius-xl);
+    border: none;
+    box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+    background-color: var(--light-bg);
+    border-bottom: 2px solid var(--primary-color);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+.modal-title {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.detail-item {
+    margin-bottom: var(--spacing-md);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.9rem;
+}
+
+.detail-value {
+    color: var(--text-main);
+    padding: 8px var(--spacing-md);
+    background-color: var(--light-bg);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent-color);
+}
