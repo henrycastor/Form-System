@@ -25,79 +25,120 @@
 <style>
   .stats-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xxl);
   }
 
   .stat-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    border-left: 6px solid var(--primary-color);
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--primary-color);
   }
 
   .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-color);
   }
 
-  .stat-card.total {
-    border-left-color: var(--primary-color);
+  .stat-card.total::after {
+    background: var(--primary-gradient);
   }
-
-  .stat-card.pending {
-    border-left-color: var(--secondary-color);
+  .stat-card.pending::after {
+    background: var(--secondary-color);
   }
-
-  .stat-card.completed {
-    border-left-color: var(--success-color);
+  .stat-card.completed::after {
+    background: var(--success-color);
   }
-
-  .stat-card.recent {
-    border-left-color: var(--accent-color);
+  .stat-card.recent::after {
+    background: var(--accent-color);
   }
 
   .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    color: white;
+    margin-bottom: var(--spacing-md);
+    background: var(--light-bg);
+    color: var(--text-main);
+    transition: var(--transition-normal);
   }
 
+  /* Specific Default States for Contrast */
   .stat-card.total .stat-icon {
-    background-color: var(--primary-color);
+    background: var(--primary-bg-light);
+    color: var(--primary-color);
   }
-
   .stat-card.pending .stat-icon {
-    background-color: var(--secondary-color);
+    background: var(--secondary-bg);
+    color: var(--warning-color);
   }
-
   .stat-card.completed .stat-icon {
-    background-color: var(--success-color);
+    background: var(--success-bg);
+    color: var(--success-color);
+  }
+  .stat-card.recent .stat-icon {
+    background: var(--accent-bg-light);
+    color: var(--accent-color);
   }
 
-  .stat-card.recent .stat-icon {
-    background-color: var(--accent-color);
+  .stat-card:hover .stat-icon {
+    transform: scale(1.1) translateY(-2px);
+    background: var(--primary-color);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stat-card.pending:hover .stat-icon {
+    background: var(--secondary-color);
+    color: var(--primary-color); /* Dark color on yellow for contrast */
+  }
+
+  .stat-card.completed:hover .stat-icon {
+    background: var(--success-color);
+    color: var(--white);
+  }
+
+  .stat-card.recent:hover .stat-icon {
+    background: var(--accent-color);
+    color: var(--white);
   }
 
   .stat-value {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 5px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -1px;
   }
 
   .stat-label {
-    color: #666;
-    font-size: 1rem;
-    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Question } from '$lib/types/validation';
   import { Paperclip, CheckCircle } from 'lucide-svelte';
+  import { RadioGroup } from 'bits-ui';
 
   const {
     title,
@@ -48,47 +49,30 @@
         <div class="question-title">{q.text || ''}</div>
       {/if}
 
-      {#if q.type === 'choice'}
-        <div class="radio-group">
-          {#each (q.options as string[]) || [] as option}
-            <label class="radio-option">
-              <input
-                type="radio"
-                name={q.id}
-                value={option}
-                checked={values[q.id] === option}
-                onchange={() => handleValueChange(q.id, option)}
-              />
-              <span class="radio-custom"></span>
-              <span class="radio-label">{option}</span>
-            </label>
-          {/each}
-        </div>
-      {:else if q.type === 'bool'}
-        <div class="radio-group">
-          <label class="radio-option">
-            <input
-              type="radio"
-              name={q.id}
-              value="true"
-              checked={values[q.id] === 'true'}
-              onchange={() => handleValueChange(q.id, 'true')}
-            />
-            <span class="radio-custom"></span>
-            <span class="radio-label">Sim</span>
-          </label>
-          <label class="radio-option">
-            <input
-              type="radio"
-              name={q.id}
-              value="false"
-              checked={values[q.id] === 'false'}
-              onchange={() => handleValueChange(q.id, 'false')}
-            />
-            <span class="radio-custom"></span>
-            <span class="radio-label">Não</span>
-          </label>
-        </div>
+      {#if q.type === 'choice' || q.type === 'bool'}
+        <RadioGroup.Root
+          value={String(values[q.id] || '')}
+          onValueChange={(v) => handleValueChange(q.id, v)}
+          class="radio-group-container"
+        >
+          {#if q.type === 'bool'}
+            <div class="radio-option-wrapper">
+              <RadioGroup.Item value="true" id="{q.id}-true" class="radio-item" />
+              <label for="{q.id}-true" class="radio-label">Sim</label>
+            </div>
+            <div class="radio-option-wrapper">
+              <RadioGroup.Item value="false" id="{q.id}-false" class="radio-item" />
+              <label for="{q.id}-false" class="radio-label">Não</label>
+            </div>
+          {:else}
+            {#each (q.options as string[]) || [] as option}
+              <div class="radio-option-wrapper">
+                <RadioGroup.Item value={option} id="{q.id}-{option}" class="radio-item" />
+                <label for="{q.id}-{option}" class="radio-label">{option}</label>
+              </div>
+            {/each}
+          {/if}
+        </RadioGroup.Root>
       {:else}
         <div class="text-area-container">
           <textarea
@@ -150,58 +134,125 @@
 
 <style>
   .form-section {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
   }
 
   .section-title {
     color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 15px;
+    font-weight: 800;
+    margin-bottom: var(--spacing-xl);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-md);
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
   }
 
   .question-container {
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    padding: var(--spacing-xl);
+    background-color: var(--body-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-normal);
+  }
+
+  .question-container:focus-within {
+    border-color: var(--primary-color);
+    background-color: white;
+    box-shadow: var(--shadow-sm);
   }
 
   .question-title {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.1rem;
+    line-height: 1.4;
   }
 
-  .radio-group {
+  :global(.radio-group-container) {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-sm);
   }
 
-  .radio-option {
+  .radio-option-wrapper {
     display: flex;
     align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: white;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-fast);
     cursor: pointer;
   }
 
-  .radio-option input {
-    margin-right: 8px;
+  .radio-option-wrapper:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-bg-light);
   }
 
-  .text-area-container {
-    margin-top: 10px;
+  :global(.radio-option-wrapper:has(button[data-state='checked'])) {
+    border-color: var(--primary-color);
+    background: var(--primary-bg-light);
+    box-shadow: var(--shadow-sm);
   }
 
-  .text-area-container textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+  :global(.radio-item) {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-circle);
+    border: 2px solid var(--border-color);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  :global(.radio-item[data-state='checked']) {
+    border-color: var(--primary-color);
+    border-width: 6px;
+  }
+
+  :global(.radio-indicator) {
+    display: none;
+  }
+
+  .radio-label {
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    flex: 1;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .form-control {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-md);
+    transition: var(--transition-fast);
+  }
+
+  .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-bg-light);
+    outline: none;
   }
 </style>

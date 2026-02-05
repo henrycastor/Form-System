@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { enhance } from '$app/forms';
-  import { Star, House, LayoutDashboard, FileText, LogOut } from 'lucide-svelte';
+  import { House, LayoutDashboard, FileText, LogOut } from 'lucide-svelte';
 
   let { activePage = '' }: { activePage?: string } = $props();
   let isAuthenticated = $derived(!!page.data.isAuthenticated);
@@ -10,15 +10,7 @@
 <header class="company-header">
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-      <a class="navbar-brand" href="/">
-        <Star
-          class="me-2"
-          size={28}
-          strokeWidth={2.5}
-          fill="var(--secondary-color)"
-          color="var(--secondary-color)"
-        /> Company
-      </a>
+      <a class="navbar-brand" href="/"> Company </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -79,15 +71,6 @@
     display: flex;
     align-items: center;
     letter-spacing: -0.5px;
-  }
-
-  .navbar-brand :global(svg) {
-    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.4));
-    transition: var(--transition-normal);
-  }
-
-  .navbar-brand:hover :global(svg) {
-    transform: rotate(15deg) scale(1.1);
   }
 
   .nav-link {

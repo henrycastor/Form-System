@@ -8,7 +8,7 @@
 <div class="toast-container">
   {#each $toasts as t (t.id)}
     <div
-      class="toast toast-{t.type}"
+      class="toast-card toast-{t.type}"
       animate:flip
       in:fly={{ y: 20, duration: 300 }}
       out:fade
@@ -16,23 +16,26 @@
     >
       <div class="toast-icon">
         {#if t.type === 'success'}
-          <CheckCircle size={20} />
+          <CheckCircle size={22} strokeWidth={2.5} />
         {:else if t.type === 'error'}
-          <XCircle size={20} />
+          <XCircle size={22} strokeWidth={2.5} />
         {:else if t.type === 'warning'}
-          <AlertTriangle size={20} />
+          <AlertTriangle size={22} strokeWidth={2.5} />
         {:else if t.type === 'loading'}
-          <Loader2 size={20} class="spin" />
+          <Loader2 size={22} class="spin" />
         {:else}
-          <Info size={20} />
+          <Info size={22} strokeWidth={2.5} />
         {/if}
       </div>
-      <div class="toast-content">
-        {t.message}
+      <div class="toast-body">
+        <div class="toast-message">{t.message}</div>
       </div>
-      <button class="toast-close" onclick={() => removeToast(t.id)} aria-label="Fechar">
-        <XIcon size={20} />
+      <button class="toast-close-btn" onclick={() => removeToast(t.id)} aria-label="Fechar">
+        <XIcon size={18} />
       </button>
+      <div class="toast-progress-bar">
+        <div class="toast-progress-fill" style="animation-duration: {t.duration}ms"></div>
+      </div>
     </div>
   {/each}
 </div>
@@ -40,109 +43,140 @@
 <style>
   .toast-container {
     position: fixed;
-    top: 32px;
-    right: 32px;
+    top: 24px;
+    right: 24px;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     gap: 12px;
     pointer-events: none;
+    max-width: 420px;
+    width: 100%;
   }
 
-  .toast {
+  .toast-card {
     pointer-events: auto;
-    min-width: 320px;
-    max-width: 450px;
+    position: relative;
     padding: 16px 20px;
-    border-radius: var(--radius-lg);
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius-xl);
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xl);
     display: flex;
     align-items: center;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-main);
+    gap: 16px;
+    overflow: hidden;
     transition: var(--transition-normal);
   }
 
-  .toast::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 20%;
-    height: 60%;
-    width: 4px;
-    border-radius: 0 4px 4px 0;
-  }
-
-  .toast-success::before {
-    background-color: var(--success-color);
+  /* Success State */
+  .toast-success {
+    border-top: 4px solid var(--success-color);
   }
   .toast-success .toast-icon {
     color: var(--success-color);
   }
+  .toast-success .toast-progress-fill {
+    background-color: var(--success-color);
+  }
 
-  .toast-error::before {
-    background-color: var(--danger-color);
+  /* Error State */
+  .toast-error {
+    border-top: 4px solid var(--danger-color);
   }
   .toast-error .toast-icon {
     color: var(--danger-color);
   }
+  .toast-error .toast-progress-fill {
+    background-color: var(--danger-color);
+  }
 
-  .toast-warning::before {
-    background-color: var(--warning-color);
+  /* Warning State */
+  .toast-warning {
+    border-top: 4px solid var(--warning-color);
   }
   .toast-warning .toast-icon {
     color: var(--warning-color);
   }
-
-  .toast-info::before {
-    background-color: var(--accent-color);
-  }
-  .toast-info .toast-icon {
-    color: var(--accent-color);
+  .toast-warning .toast-progress-fill {
+    background-color: var(--warning-color);
   }
 
-  .toast-loading::before {
-    background-color: var(--text-muted);
+  /* Info/Loading State */
+  .toast-info,
+  .toast-loading {
+    border-top: 4px solid var(--primary-color);
   }
+  .toast-info .toast-icon,
   .toast-loading .toast-icon {
-    color: var(--text-muted);
+    color: var(--primary-color);
+  }
+  .toast-info .toast-progress-fill,
+  .toast-loading .toast-progress-fill {
+    background-color: var(--primary-color);
   }
 
   .toast-icon {
-    margin-right: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
 
-  .toast-content {
+  .toast-body {
     flex: 1;
-    margin-right: 12px;
+  }
+
+  .toast-message {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
     line-height: 1.4;
   }
 
-  .toast-close {
-    background: rgba(0, 0, 0, 0.05);
+  .toast-close-btn {
+    background: var(--light-bg);
     border: none;
     border-radius: var(--radius-circle);
     cursor: pointer;
     color: var(--text-muted);
-    padding: 4px;
+    padding: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition-fast);
+    flex-shrink: 0;
   }
 
-  .toast-close:hover {
-    background: rgba(0, 0, 0, 0.1);
+  .toast-close-btn:hover {
+    background: var(--border-color);
     color: var(--text-main);
+  }
+
+  .toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--light-bg);
+    opacity: 0.3;
+  }
+
+  .toast-progress-fill {
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    animation: shrink linear forwards;
+  }
+
+  @keyframes shrink {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
   }
 
   .spin {
@@ -155,6 +189,17 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .toast-container {
+      top: auto;
+      bottom: 24px;
+      right: 20px;
+      left: 20px;
+      max-width: none;
+      width: auto;
     }
   }
 </style>

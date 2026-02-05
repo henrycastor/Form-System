@@ -19,29 +19,44 @@
 <style>
   .search-box {
     position: relative;
-    max-width: 300px;
+    max-width: 350px;
+    width: 100%;
   }
 
   .search-box input {
-    padding: 10px 15px 10px 45px;
-    border: 2px solid #e1e5eb;
-    border-radius: 8px;
+    padding: 12px 16px 12px 48px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     width: 100%;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: var(--transition-normal);
+    background-color: var(--white);
+    color: var(--text-main);
   }
 
   .search-box input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 0.25rem rgba(52, 181, 229, 0.25);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-bg-light);
     outline: none;
+    transform: translateY(-1px);
   }
 
   .search-box :global(.search-icon) {
     position: absolute;
-    left: 15px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: var(--transition-fast);
+  }
+
+  .search-box input:focus + :global(.search-icon) {
+    color: var(--primary-color);
+  }
+
+  .search-box input::placeholder {
+    color: var(--text-light);
   }
 </style>

@@ -167,21 +167,12 @@
 />
 
 <style>
-  :root {
-    --primary-color: #0056a6;
-    --secondary-color: #ffcc00;
-    --accent-color: #34b5e5;
-    --light-bg: #f8f9fa;
-    --danger-color: #dc3545;
-    --success-color: #28a745;
-  }
-
   .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 30px 20px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    padding: var(--spacing-xxl) var(--spacing-md);
+    background: var(--body-bg);
     min-height: calc(100vh - 150px);
   }
 
@@ -195,22 +186,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: var(--spacing-xxl);
     flex-wrap: wrap;
-    gap: 20px;
+    gap: var(--spacing-xl);
   }
 
   .page-title {
     color: var(--primary-color);
-    font-weight: 700;
-    font-size: 2.5rem;
+    font-weight: 900;
+    font-size: 2.75rem;
     margin: 0;
+    letter-spacing: -1.5px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .page-subtitle {
-    color: #666;
-    font-size: 1.1rem;
-    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    margin-top: var(--spacing-xs);
+    font-weight: 500;
   }
 
   .loading-full-page {
@@ -218,16 +215,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f8f9fa;
+    background: var(--white);
   }
 
   .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 86, 166, 0.1);
-    border-radius: 50%;
-    border-top-color: #0056a6;
-    animation: spin 0.8s linear infinite;
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--primary-bg-light);
+    border-radius: var(--radius-circle);
+    border-top-color: var(--primary-color);
+    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
   }
 
   @keyframes spin {

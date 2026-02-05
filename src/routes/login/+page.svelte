@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { ShieldCheck, Key, AlertCircle } from 'lucide-svelte';
+  import { ShieldCheck, Key, AlertCircle, ArrowRight, Loader2 } from 'lucide-svelte';
 
   let { form } = $props();
   let isLoading = $state(false);
@@ -13,14 +13,14 @@
   );
 </script>
 
-<div class="login-page">
+<div class="login-wrapper">
   <div class="login-card">
     <div class="login-header">
-      <div class="logo-container">
-        <ShieldCheck size={32} />
+      <div class="logo-badge">
+        <ShieldCheck size={32} strokeWidth={2.5} />
       </div>
       <h1>Acesso Restrito</h1>
-      <p>Digite a senha para acessar o painel administrativo</p>
+      <p>Área exclusiva para administradores da Company</p>
     </div>
 
     <form
@@ -34,196 +34,274 @@
       }}
       class="login-form"
     >
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <div class="input-wrapper">
+      <div class="form-field">
+        <label for="password">Chave de Acesso</label>
+        <div class="input-container">
           <Key class="input-icon" size={20} />
           <input
             type="password"
             name="password"
             id="password"
-            placeholder="Digite a senha..."
+            placeholder="Digite sua senha..."
             required
+            disabled={isLoading}
           />
         </div>
         {#if errorMessage}
-          <div class="error-message">
+          <div class="error-toast">
             <AlertCircle size={16} />
             {errorMessage}
           </div>
         {/if}
       </div>
 
-      <button type="submit" class="login-button" disabled={isLoading}>
+      <button type="submit" class="submit-btn" disabled={isLoading}>
         {#if isLoading}
-          <span class="spinner"></span> Verificando...
+          <Loader2 class="spin" size={20} /> Autenticando...
         {:else}
-          Acessar Painel
+          Entrar no Painel <ArrowRight size={18} />
         {/if}
       </button>
     </form>
+
+    <div class="login-footer">
+      <p>&copy; 2024 Company. Todos os direitos reservados.</p>
+    </div>
   </div>
 </div>
 
 <style>
-  .login-page {
+  .login-wrapper {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0056a6 0%, #34b5e5 100%);
-    padding: 20px;
-    font-family:
-      'Inter',
-      system-ui,
-      -apple-system,
-      sans-serif;
+    background: var(--primary-gradient);
+    padding: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: var(--secondary-color);
+    filter: blur(150px);
+    opacity: 0.2;
+    top: -100px;
+    left: -100px;
+    border-radius: var(--radius-circle);
+  }
+
+  .login-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: var(--accent-color);
+    filter: blur(150px);
+    opacity: 0.15;
+    bottom: -150px;
+    right: -150px;
+    border-radius: var(--radius-circle);
   }
 
   .login-card {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 48px;
+    border-radius: var(--radius-xxl);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     width: 100%;
-    max-width: 400px;
-    animation: slideUp 0.5s ease-out;
+    max-width: 440px;
+    position: relative;
+    z-index: 10;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  @keyframes slideUp {
+  @keyframes fadeInScale {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: scale(0.95) translateY(10px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
     }
   }
 
   .login-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: var(--spacing-xxl);
   }
 
-  .logo-container {
-    width: 60px;
-    height: 60px;
-    background: rgba(0, 86, 166, 0.1);
-    color: #0056a6;
-    border-radius: 50%;
+  .logo-badge {
+    width: 64px;
+    height: 64px;
+    background: var(--primary-bg-light);
+    color: var(--primary-color);
+    border-radius: var(--radius-xl);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
-    margin: 0 auto 15px;
+    margin: 0 auto var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
   }
 
   h1 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 8px;
-    font-weight: 700;
+    font-size: 1.75rem;
+    color: var(--text-main);
+    margin: 0 0 var(--spacing-xs);
+    font-weight: 800;
+    letter-spacing: -1px;
   }
 
-  p {
-    color: #666;
-    font-size: 0.9rem;
+  .login-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
   }
 
-  .form-group {
-    margin-bottom: 20px;
+  .form-field {
+    margin-bottom: var(--spacing-xl);
   }
 
   label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: var(--spacing-sm);
   }
 
-  .input-wrapper {
+  .input-container {
     position: relative;
     display: flex;
     align-items: center;
   }
 
-  .input-wrapper :global(.input-icon) {
+  .input-icon {
     position: absolute;
-    left: 15px;
-    color: #999;
+    left: 16px;
+    color: var(--text-light);
+    transition: var(--transition-fast);
   }
 
   input {
     width: 100%;
-    padding: 12px 15px 12px 45px;
-    border: 2px solid #eee;
-    border-radius: 12px;
+    padding: 14px 16px 14px 48px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     font-size: 1rem;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    transition: var(--transition-normal);
     outline: none;
+    background: var(--white);
   }
 
   input:focus {
-    border-color: #0056a6;
-    box-shadow: 0 0 0 4px rgba(0, 86, 166, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-bg-light);
   }
 
-  .error-message {
-    color: #dc3545;
-    font-size: 0.8rem;
-    margin-top: 8px;
+  input:focus + .input-icon {
+    color: var(--primary-color);
+  }
+
+  .error-toast {
+    color: var(--danger-color);
+    background: #fdf2f2;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: var(--spacing-md);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    border: 1px solid rgba(220, 53, 69, 0.1);
+    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   }
 
-  .login-button {
+  @keyframes shake {
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+
+  .submit-btn {
     width: 100%;
-    padding: 14px;
-    background: #0056a6;
+    padding: 16px;
+    background: var(--primary-gradient);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
+    border-radius: var(--radius-lg);
+    font-weight: 700;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    box-shadow: var(--shadow-lg);
   }
 
-  .login-button:hover {
-    background: #004485;
+  .submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 86, 166, 0.3);
+    box-shadow: 0 10px 20px -5px rgba(0, 86, 166, 0.4);
   }
 
-  .login-button:active {
+  .submit-btn:active:not(:disabled) {
     transform: translateY(0);
   }
 
-  .login-button:disabled {
-    background: #ccc;
+  .submit-btn:disabled {
+    opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
   }
 
-  .spinner {
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 0.8s linear infinite;
+  .spin {
+    animation: spin 1s linear infinite;
   }
 
   @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
     to {
       transform: rotate(360deg);
     }
+  }
+
+  .login-footer {
+    margin-top: var(--spacing-xxl);
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-lg);
+  }
+
+  .login-footer p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
   }
 </style>

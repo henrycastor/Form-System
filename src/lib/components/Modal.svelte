@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { Dialog } from 'bits-ui';
   import type { Snippet } from 'svelte';
   import type { ModalCallback } from '$lib/types/admin';
+  import { fade, scale } from 'svelte/transition';
 
   const {
     isVisible = false,
@@ -17,133 +19,139 @@
     body?: Snippet;
     footer?: Snippet;
   } = $props();
-
-  function handleClose() {
-    closeModal();
-  }
 </script>
 
-{#if isVisible}
-  <div
-    class="modal fade show"
-    tabindex="-1"
-    aria-hidden="true"
-    style="display: block;"
-    role="dialog"
-  >
-    <div class="modal-dialog {size === 'lg' ? 'modal-lg' : ''}">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{title}</h5>
-          <button type="button" class="btn-close" onclick={handleClose} aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          {@render body?.()}
-        </div>
-        <div class="modal-footer">
-          {@render footer?.()}
-        </div>
-      </div>
+<Dialog.Root open={isVisible} onOpenChange={(open) => !open && closeModal()}>
+  <Dialog.Portal>
+    <Dialog.Overlay class="modal-backdrop">
+      {#snippet child({ props })}
+        <div {...props} transition:fade={{ duration: 150 }}></div>
+      {/snippet}
+    </Dialog.Overlay>
+    <div class="modal-wrapper">
+      <Dialog.Content class="modal-dialog {size === 'lg' ? 'modal-lg' : ''}">
+        {#snippet child({ props })}
+          <div {...props} transition:scale={{ duration: 200, start: 0.95 }}>
+            <div class="modal-content">
+              <div class="modal-header">
+                <Dialog.Title class="modal-title h5">{title}</Dialog.Title>
+                <Dialog.Close class="btn-close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </Dialog.Close>
+              </div>
+              <div class="modal-body">
+                {@render body?.()}
+              </div>
+              {#if footer}
+                <div class="modal-footer">
+                  {@render footer()}
+                </div>
+              {/if}
+            </div>
+          </div>
+        {/snippet}
+      </Dialog.Content>
     </div>
-  </div>
-  <div class="modal-backdrop fade show"></div>
-{/if}
+  </Dialog.Portal>
+</Dialog.Root>
 
 <style>
-  .modal {
+  .modal-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1050;
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
     overflow-y: auto;
-    outline: 0;
-  }
-
-  .modal-dialog {
-    position: relative;
-    width: auto;
-    margin: 1.75rem auto;
+    padding: 1.75rem;
     pointer-events: none;
   }
 
-  .modal-dialog.modal-lg {
+  :global(.modal-dialog) {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    pointer-events: auto;
+    margin: 0;
+    outline: none;
+  }
+
+  :global(.modal-dialog.modal-lg) {
     max-width: 800px;
   }
 
   .modal-content {
-    position: relative;
+    background-color: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.5rem;
-    outline: 0;
+    overflow: hidden;
   }
 
   .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1rem;
-    border-bottom: 1px solid #dee2e6;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
   }
 
-  .modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
+  :global(.modal-title) {
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.25rem;
   }
 
-  .btn-close {
+  :global(.btn-close) {
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 0.5rem;
-    margin: -0.5rem -0.5rem -0.5rem auto;
-    color: #000;
-    opacity: 0.5;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+    padding: var(--spacing-sm);
+    line-height: 1;
+    margin: calc(var(--spacing-sm) * -1);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .btn-close:hover {
-    opacity: 0.75;
-    color: #000;
+  :global(.btn-close:hover) {
+    color: var(--danger-color);
+    transform: rotate(90deg);
   }
 
   .modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
+    padding: var(--spacing-xl);
     overflow-y: auto;
-    max-height: 75vh;
+    max-height: 70vh;
   }
 
   .modal-footer {
     display: flex;
     justify-content: flex-end;
-    padding: 1rem;
-    border-top: 1px solid #dee2e6;
-    gap: 10px;
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    gap: var(--spacing-md);
+    background-color: var(--light-bg);
   }
 
-  .modal-backdrop {
+  :global(.modal-backdrop) {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1040;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
-    opacity: 0.5;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
   }
 </style>
