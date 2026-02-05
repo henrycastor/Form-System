@@ -65,7 +65,7 @@
     </form>
 
     <div class="login-footer">
-      <p>&copy; 2024 Company. Todos os direitos reservados.</p>
+      <p>&copy; 2026 Company. Todos os direitos reservados.</p>
     </div>
   </div>
 </div>

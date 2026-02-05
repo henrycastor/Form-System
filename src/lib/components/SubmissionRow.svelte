@@ -29,8 +29,11 @@
     <span class="form-badge form1">{item.title || 'N/A'}</span>
   </td>
   <td class="date-cell">{formatDate(item.date || item.submitted_at)}</td>
-  <td class="status-cell {getStatusClass(item.status)}">
-    {getStatusText(item.status)}
+  <td class="status-cell">
+    <span class="status-badge {getStatusClass(item.status)}">
+      <span class="status-dot"></span>
+      {getStatusText(item.status)}
+    </span>
   </td>
   <td>
     <div class="action-buttons">
@@ -109,17 +112,41 @@
   }
 
   .status-cell {
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    vertical-align: middle;
   }
 
-  .status-cell.completed {
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition-fast);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-circle);
+    background: currentColor;
+  }
+
+  .status-badge.completed {
+    background-color: var(--success-bg);
     color: var(--success-color);
   }
 
-  .status-cell.pending {
+  .status-badge.pending {
+    background-color: var(--warning-bg);
     color: var(--warning-color);
+  }
+
+  .status-badge:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
   }
 </style>

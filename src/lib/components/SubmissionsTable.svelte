@@ -83,17 +83,21 @@
             {perPage}
             <ChevronsUpDown size={16} class="ms-2 opacity-50" />
           </Select.Trigger>
-          <Select.Content class="select-content" portal={null}>
-            <Select.Group>
-              {#each [5, 10, 20, 50] as val}
-                <Select.Item value={String(val)} label={String(val)} class="select-item">
-                  {val}
-                  <Select.ItemIndicator class="ms-auto">
-                    <Check size={14} />
-                  </Select.ItemIndicator>
-                </Select.Item>
-              {/each}
-            </Select.Group>
+          <Select.Content class="select-content">
+            <Select.Viewport>
+              <Select.Group>
+                {#each [5, 10, 20, 50] as val}
+                  <Select.Item value={String(val)} label={String(val)} class="select-item">
+                    {#snippet children({ selected })}
+                      {val}
+                      {#if selected}
+                        <Check size={14} class="ms-auto" />
+                      {/if}
+                    {/snippet}
+                  </Select.Item>
+                {/each}
+              </Select.Group>
+            </Select.Viewport>
           </Select.Content>
         </Select.Root>
       </div>
