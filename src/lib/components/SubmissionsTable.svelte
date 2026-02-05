@@ -31,11 +31,6 @@
     }
   }
 
-  function getSortIcon(column: string) {
-    if (sortColumn !== column) return '';
-    return sortDirection === 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill';
-  }
-
   let filteredSubmissions = $derived.by(() => {
     const query = searchQuery.toLowerCase();
     const filtered = submissions.filter((s: Submission) => {

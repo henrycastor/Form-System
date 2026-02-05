@@ -18,7 +18,7 @@ export interface Question {
  */
 export interface QuestionCategory {
 	category?: string;
-	icon?: string;
+	icon?: any;
 	questions: Question[];
 	[key: string]: unknown;
 }

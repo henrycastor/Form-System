@@ -7,7 +7,7 @@
     href = '#',
     buttonText = 'Acessar',
   }: {
-    icon: Component;
+    icon: any;
     title: string;
     href?: string;
     buttonText?: string;

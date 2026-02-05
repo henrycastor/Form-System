@@ -1,22 +1,19 @@
 <script lang="ts">
-  import { getIcon } from '$lib/utils/iconMap';
   import { ArrowRight } from 'lucide-svelte';
 
   const {
     title,
     description,
-    icon,
+    icon: Icon,
     href = '#',
     colorIndex = 1,
   }: {
     title: string;
     description: string;
-    icon: string;
+    icon: any;
     href?: string;
     colorIndex?: number;
   } = $props();
-
-  const Icon = $derived(getIcon(icon));
 </script>
 
 <a {href} class="form-card-link" data-sveltekit-preload-data="hover">

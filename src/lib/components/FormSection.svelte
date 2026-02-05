@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { Question } from '$lib/types/validation';
-  import { getIcon } from '$lib/utils/iconMap';
-  import { Paperclip } from 'lucide-svelte';
+  import { Paperclip, CheckCircle } from 'lucide-svelte';
 
   const {
     title,
-    icon = 'bi-check2-square',
+    icon: Icon = CheckCircle,
     questions,
     values,
     comments,
@@ -14,7 +13,7 @@
     onUpdate = () => {},
   }: {
     title: string;
-    icon?: string;
+    icon?: any;
     questions: Question[];
     values: Record<string, unknown>;
     comments: Record<string, string>;
@@ -22,8 +21,6 @@
     showIds?: boolean;
     onUpdate?: (key: string, value: unknown) => void;
   } = $props();
-
-  const Icon = $derived(getIcon(icon));
 
   function getError(id: string): string {
     const error = errors[id];

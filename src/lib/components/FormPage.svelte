@@ -9,7 +9,7 @@
   import FormSection from '$lib/components/FormSection.svelte';
   import { toast } from '$lib/components/toast';
   import { formIntro } from '$lib/form/formIntro';
-  import { XCircle } from 'lucide-svelte';
+  import { XCircle, CheckCircle } from 'lucide-svelte';
 
   // Props
   const {
@@ -138,7 +138,7 @@
         {#each formIntro as category}
           <FormSection
             title={category.category}
-            icon={category.icon || 'bi-check2-square'}
+            icon={category.icon || CheckCircle}
             questions={category.questions}
             values={$formState}
             comments={{}}
@@ -152,7 +152,7 @@
         {#each formData.questions as category}
           <FormSection
             title={category.category || 'Seção'}
-            icon={category.icon || 'bi-check2-square'}
+            icon={category.icon || CheckCircle}
             questions={category.questions}
             values={$formState}
             comments={$formState}
