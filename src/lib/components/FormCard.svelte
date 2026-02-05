@@ -22,8 +22,7 @@
       <Icon size={40} />
     </div>
     <h3 class="form-title">{title}</h3>
-    <br />
-    <div class="form-btn mt-auto">
+    <div class="form-btn">
       Acessar <ArrowRight class="ms-2" size={18} />
     </div>
   </div>

@@ -22,58 +22,60 @@
 </script>
 
 <Modal {isVisible} title="Detalhes do Formulário" size="lg" {closeModal}>
-  <div slot="body" id="printable-content">
-    <div class="form-details">
-      <FormDetailItem label="Nome Completo" value={item?.name} />
-      <FormDetailItem label="Setor/Área" value={item?.sector} />
-      <FormDetailItem label="Formulário" value={item?.title} />
-      <FormDetailItem label="Data de Envio" value={formatDate(item?.date)} />
-      <FormDetailItem
-        label="Status"
-        value={item?.status === 'completed' ? 'Completo' : 'Pendente de revisão'}
-        isSuccess={item?.status === 'completed'}
-        isWarning={item?.status !== 'completed'}
-      />
-    </div>
+  {#snippet body()}
+    <div id="printable-content">
+      <div class="form-details">
+        <FormDetailItem label="Nome Completo" value={item?.name} />
+        <FormDetailItem label="Setor/Área" value={item?.sector} />
+        <FormDetailItem label="Formulário" value={item?.title} />
+        <FormDetailItem label="Data de Envio" value={formatDate(item?.date)} />
+        <FormDetailItem
+          label="Status"
+          value={item?.status === 'completed' ? 'Completo' : 'Pendente de revisão'}
+          isSuccess={item?.status === 'completed'}
+          isWarning={item?.status !== 'completed'}
+        />
+      </div>
 
-    {#if item?.data}
-      <h5 class="mb-3 mt-4">Respostas do Formulário</h5>
-      {#each getQuestionsForForm(item.title) as question}
-        {#if item.data?.[String(question.id)] !== undefined}
-          {@const rawValue = item.data[String(question.id)]}
-          {@const displayValue = formatDisplayValue(rawValue)}
-          <FormDetailItem
-            label={question.text}
-            value={displayValue}
-            comment={String(item.data[String(question.id) + '_comment'] || '')}
-          />
-        {:else}
-          <FormDetailItem
-            label={question.text}
-            value={`Resposta não encontrada para: ${question.id}`}
-            isWarning={true}
-          />
-        {/if}
-      {/each}
-    {:else if item?.details}
-      <h5 class="mb-3 mt-4">Respostas do Formulário (Formato Antigo)</h5>
-      {#each Object.entries(item.details) as [key, value]}
-        <FormDetailItem label={key} {value} />
-      {/each}
-    {:else}
-      <FormDetailItem
-        label="Debug: No Data or Details"
-        value="Nenhum dado ou detalhes encontrados."
-        isWarning={true}
-      />
-    {/if}
-  </div>
-  <div slot="footer">
+      {#if item?.data}
+        <h5 class="mb-3 mt-4">Respostas do Formulário</h5>
+        {#each getQuestionsForForm(item.title) as question}
+          {#if item.data?.[String(question.id)] !== undefined}
+            {@const rawValue = item.data[String(question.id)]}
+            {@const displayValue = formatDisplayValue(rawValue)}
+            <FormDetailItem
+              label={question.text}
+              value={displayValue}
+              comment={String(item.data[String(question.id) + '_comment'] || '')}
+            />
+          {:else}
+            <FormDetailItem
+              label={question.text}
+              value={`Resposta não encontrada para: ${question.id}`}
+              isWarning={true}
+            />
+          {/if}
+        {/each}
+      {:else if item?.details}
+        <h5 class="mb-3 mt-4">Respostas do Formulário (Formato Antigo)</h5>
+        {#each Object.entries(item.details) as [key, value]}
+          <FormDetailItem label={key} {value} />
+        {/each}
+      {:else}
+        <FormDetailItem
+          label="Debug: No Data or Details"
+          value="Nenhum dado ou detalhes encontrados."
+          isWarning={true}
+        />
+      {/if}
+    </div>
+  {/snippet}
+  {#snippet footer()}
     <button type="button" class="btn btn-secondary" onclick={() => closeModal()}>Fechar</button>
     <button type="button" class="btn btn-primary" onclick={handlePrint}>
       <Printer size={18} class="me-2" />Imprimir
     </button>
-  </div>
+  {/snippet}
 </Modal>
 
 <style>

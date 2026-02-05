@@ -65,34 +65,52 @@
 <style>
   .company-header {
     background-color: var(--primary-color);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--primary-gradient);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
 
   .navbar-brand {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.8rem;
     color: white !important;
     display: flex;
     align-items: center;
+    letter-spacing: -0.5px;
   }
 
   .navbar-brand :global(svg) {
-    margin-right: 10px;
+    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.4));
+    transition: var(--transition-normal);
+  }
+
+  .navbar-brand:hover :global(svg) {
+    transform: rotate(15deg) scale(1.1);
   }
 
   .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-weight: 500;
-    padding: 8px 16px !important;
-    margin: 0 5px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 600;
+    padding: 10px 20px !important;
+    margin: 0 4px;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
   }
 
-  .nav-link:hover,
-  .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.15);
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.12);
     color: white !important;
+    transform: translateY(-1px);
+  }
+
+  .nav-link.active {
+    background-color: white;
+    color: var(--primary-color) !important;
+    box-shadow: var(--shadow-sm);
   }
 
   .btn-logout {
@@ -101,5 +119,11 @@
     width: 100%;
     text-align: left;
     cursor: pointer;
+  }
+
+  @media (max-width: 991px) {
+    .nav-link {
+      margin: 5px 0;
+    }
   }
 </style>

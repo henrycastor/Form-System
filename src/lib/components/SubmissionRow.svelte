@@ -47,32 +47,29 @@
 <style>
   .form-badge {
     display: inline-block;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
     text-align: center;
-    min-width: 100px;
-  }
-
-  .form-badge.form1 {
-    background-color: rgba(0, 86, 166, 0.1);
+    background-color: var(--primary-bg-light);
     color: var(--primary-color);
-    border: 1px solid rgba(0, 86, 166, 0.2);
+    border: 1px solid rgba(0, 86, 166, 0.1);
+    white-space: nowrap;
   }
 
   .action-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
 
   .btn-action {
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border: none;
-    transition: all 0.3s ease;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,34 +77,42 @@
   }
 
   .btn-action.view {
-    background-color: rgba(52, 181, 229, 0.1);
+    background-color: var(--accent-bg-light);
     color: var(--accent-color);
-    border: 1px solid rgba(52, 181, 229, 0.3);
+    border-color: rgba(52, 181, 229, 0.2);
   }
 
   .btn-action.view:hover {
     background-color: var(--accent-color);
     color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
   }
 
   .btn-action.delete {
-    background-color: rgba(220, 53, 69, 0.1);
+    background-color: var(--danger-bg);
     color: var(--danger-color);
-    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-color: rgba(239, 68, 68, 0.2);
   }
 
   .btn-action.delete:hover {
     background-color: var(--danger-color);
     color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
   }
 
   .date-cell {
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
   }
 
   .status-cell {
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .status-cell.completed {
@@ -115,6 +120,6 @@
   }
 
   .status-cell.pending {
-    color: var(--secondary-color);
+    color: var(--warning-color);
   }
 </style>
