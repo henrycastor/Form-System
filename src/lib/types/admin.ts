@@ -1,12 +1,10 @@
-/**
- * Type definitions for admin panel components
- */
+import type { Component } from "svelte";
 
 export type StatKey = "total" | "pending" | "completed" | "recent";
 
 export interface StatConfigItem {
 	key: StatKey;
-	icon: string;
+	icon: any;
 	label: string;
 	color: string;
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { ShieldCheck, Key, AlertCircle } from 'lucide-svelte';
 
   let { form } = $props();
   let isLoading = $state(false);
@@ -16,7 +17,7 @@
   <div class="login-card">
     <div class="login-header">
       <div class="logo-container">
-        <i class="bi bi-shield-lock"></i>
+        <ShieldCheck size={32} />
       </div>
       <h1>Acesso Restrito</h1>
       <p>Digite a senha para acessar o painel administrativo</p>
@@ -36,7 +37,7 @@
       <div class="form-group">
         <label for="password">Senha</label>
         <div class="input-wrapper">
-          <i class="bi bi-key"></i>
+          <Key class="input-icon" size={20} />
           <input
             type="password"
             name="password"
@@ -47,7 +48,7 @@
         </div>
         {#if errorMessage}
           <div class="error-message">
-            <i class="bi bi-exclamation-circle"></i>
+            <AlertCircle size={16} />
             {errorMessage}
           </div>
         {/if}
@@ -148,7 +149,7 @@
     align-items: center;
   }
 
-  .input-wrapper i {
+  .input-wrapper :global(.input-icon) {
     position: absolute;
     left: 15px;
     color: #999;

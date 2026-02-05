@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { enhance } from '$app/forms';
+  import { Star, House, LayoutDashboard, FileText, LogOut } from 'lucide-svelte';
 
   let { activePage = '' }: { activePage?: string } = $props();
   let isAuthenticated = $derived(!!page.data.isAuthenticated);
@@ -10,7 +11,13 @@
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="/">
-        <i class="bi bi-star-fill"></i> Company
+        <Star
+          class="me-2"
+          size={28}
+          strokeWidth={2.5}
+          fill="var(--secondary-color)"
+          color="var(--secondary-color)"
+        /> Company
       </a>
       <button
         class="navbar-toggler"
@@ -25,26 +32,26 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <a class="nav-link {activePage === 'home' ? 'active' : ''}" href="/"
-              ><i class="bi bi-house-door me-2"></i>Tela Inicial</a
+              ><House class="me-2" size={18} />Tela Inicial</a
             >
           </li>
           <li class="nav-item">
             <a
               class="nav-link {activePage === 'admin' ? 'active' : ''}"
               href="/painel_administracao"
-              ><i class="bi bi-speedometer2 me-2"></i>Painel Administrador</a
+              ><LayoutDashboard class="me-2" size={18} />Painel Administrador</a
             >
           </li>
           <li class="nav-item">
             <a class="nav-link {activePage === 'forms' ? 'active' : ''}" href="/formularios"
-              ><i class="bi bi-file-text me-2"></i>Formulários</a
+              ><FileText class="me-2" size={18} />Formulários</a
             >
           </li>
           {#if isAuthenticated}
             <li class="nav-item">
               <form method="POST" action="/logout" use:enhance>
                 <button class="nav-link btn-logout" type="submit">
-                  <i class="bi bi-box-arrow-right me-2"></i>Sair
+                  <LogOut class="me-2" size={18} />Sair
                 </button>
               </form>
             </li>
@@ -69,8 +76,7 @@
     align-items: center;
   }
 
-  .navbar-brand i {
-    color: var(--secondary-color);
+  .navbar-brand :global(svg) {
     margin-right: 10px;
   }
 

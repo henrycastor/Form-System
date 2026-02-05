@@ -1,7 +1,8 @@
 <script lang="ts">
-  import Header from "$lib/components/Header.svelte";
-  import Footer from "$lib/components/Footer.svelte";
-  import FeatureCard from "$lib/components/FeatureCard.svelte";
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import FeatureCard from '$lib/components/FeatureCard.svelte';
+  import { BarChart3, FileText } from 'lucide-svelte';
 </script>
 
 <Header activePage="home" />
@@ -16,18 +17,14 @@
           <div class="row justify-content-center">
             <div class="col-md-4">
               <FeatureCard
-                icon="bi-bar-chart-fill"
+                icon={BarChart3}
                 title="Painel Administrativo"
                 href="/painel_administracao"
               />
             </div>
 
             <div class="col-md-4">
-              <FeatureCard
-                icon="bi-file-earmark-text-fill"
-                title="Formulários"
-                href="/formularios"
-              />
+              <FeatureCard icon={FileText} title="Formulários" href="/formularios" />
             </div>
           </div>
         </div>

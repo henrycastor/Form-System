@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { getIcon } from '$lib/utils/iconMap';
+  import { ArrowRight } from 'lucide-svelte';
+
   const {
     title,
     description,
@@ -12,17 +15,19 @@
     href?: string;
     colorIndex?: number;
   } = $props();
+
+  const Icon = $derived(getIcon(icon));
 </script>
 
 <a {href} class="form-card-link" data-sveltekit-preload-data="hover">
   <div class="form-card variant-{colorIndex}">
     <div class="form-icon">
-      <i class="bi {icon}"></i>
+      <Icon size={40} />
     </div>
     <h3 class="form-title">{title}</h3>
     <br />
     <div class="form-btn mt-auto">
-      Acessar <i class="bi bi-arrow-right"></i>
+      Acessar <ArrowRight class="ms-2" size={18} />
     </div>
   </div>
 </a>

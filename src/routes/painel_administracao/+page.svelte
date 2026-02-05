@@ -51,28 +51,30 @@
     recent: Array.isArray($submissions) ? Math.ceil($submissions.length * 0.1) : 0,
   });
 
+  import { FileText, Clock, CheckCircle, Calendar } from 'lucide-svelte';
+
   const statConfig: StatConfigItem[] = [
     {
       key: 'total',
-      icon: 'bi-file-text',
+      icon: FileText,
       label: 'Total de Envios',
       color: 'var(--primary-color)',
     },
     {
       key: 'pending',
-      icon: 'bi-clock',
+      icon: Clock,
       label: 'Pendentes de Revisão',
       color: 'var(--secondary-color)',
     },
     {
       key: 'completed',
-      icon: 'bi-check-circle',
+      icon: CheckCircle,
       label: 'Completos',
       color: 'var(--success-color)',
     },
     {
       key: 'recent',
-      icon: 'bi-calendar-week',
+      icon: Calendar,
       label: 'Últimos 7 dias',
       color: 'var(--accent-color)',
     },
