@@ -2,9 +2,8 @@
   import SearchBar from './SearchBar.svelte';
   import SubmissionRow from './SubmissionRow.svelte';
   import PaginationInfo from './PaginationInfo.svelte';
-  import { Select } from 'bits-ui';
   import type { Submission, TableHeader, ModalCallback } from '$lib/types/admin';
-  import { ChevronUp, ChevronDown, Check, ChevronsUpDown } from 'lucide-svelte';
+  import { ChevronUp, ChevronDown } from 'lucide-svelte';
 
   let {
     submissions = [],
@@ -68,39 +67,6 @@
   <div class="table-header">
     <div class="header-left">
       <h3 class="table-title">Formulários Preenchidos</h3>
-
-      <div class="per-page-selector">
-        <label for="per-page">Ver:</label>
-        <Select.Root
-          type="single"
-          value={String(perPage)}
-          onValueChange={(v) => {
-            perPage = Number(v);
-            currentPage = 1;
-          }}
-        >
-          <Select.Trigger class="select-trigger" id="per-page">
-            {perPage}
-            <ChevronsUpDown size={16} class="ms-2 opacity-50" />
-          </Select.Trigger>
-          <Select.Content class="select-content">
-            <Select.Viewport>
-              <Select.Group>
-                {#each [5, 10, 20, 50] as val}
-                  <Select.Item value={String(val)} label={String(val)} class="select-item">
-                    {#snippet children({ selected })}
-                      {val}
-                      {#if selected}
-                        <Check size={14} class="ms-auto" />
-                      {/if}
-                    {/snippet}
-                  </Select.Item>
-                {/each}
-              </Select.Group>
-            </Select.Viewport>
-          </Select.Content>
-        </Select.Root>
-      </div>
     </div>
 
     <SearchBar bind:searchQuery />
@@ -173,66 +139,6 @@
     align-items: center;
     gap: var(--spacing-xl);
     flex-wrap: wrap;
-  }
-
-  .per-page-selector {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    font-weight: 600;
-  }
-
-  :global(.select-trigger) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    color: var(--text-main);
-    cursor: pointer;
-    min-width: 70px;
-    transition: var(--transition-fast);
-  }
-
-  :global(.select-trigger:hover) {
-    border-color: var(--primary-color);
-  }
-
-  :global(.select-content) {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--spacing-xs);
-    min-width: 70px;
-    z-index: 100;
-  }
-
-  :global(.select-item) {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--text-main);
-    transition: var(--transition-fast);
-  }
-
-  :global(.select-item[data-highlighted]) {
-    background: var(--primary-bg-light);
-    color: var(--primary-color);
-    outline: none;
-  }
-
-  :global(.select-item[data-selected]) {
-    background: var(--primary-color);
-    color: white;
   }
 
   .header-content {
