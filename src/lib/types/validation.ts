@@ -17,6 +17,10 @@ export interface Question {
 	text: string;
 	type?: string;
 	link_attachment?: string;
+	/** HTML autocomplete attribute value for browser autofill support */
+	autocomplete?: string;
+	/** Options for choice-type questions */
+	options?: string[];
 	/** Additional properties for extensibility */
 	extra?: QuestionExtra;
 }

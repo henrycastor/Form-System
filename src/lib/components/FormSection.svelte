@@ -49,7 +49,6 @@
 
       {#if q.type === 'choice' || q.type === 'bool'}
         <RadioGroup.Root
-          value={String(values[q.id] || '')}
           onValueChange={(v) => handleValueChange(q.id, v)}
           class="radio-group-container"
         >
@@ -63,7 +62,7 @@
               <label for="{q.id}-false" class="radio-label">Não</label>
             </div>
           {:else}
-            {#each (q.options as string[]) || [] as option}
+            {#each q.options || [] as option}
               <div class="radio-option-wrapper">
                 <RadioGroup.Item value={option} id="{q.id}-{option}" class="radio-item" />
                 <label for="{q.id}-{option}" class="radio-label">{option}</label>
@@ -78,6 +77,7 @@
             name={q.id}
             rows="3"
             value={String(values[q.id] || '')}
+            autocomplete={(q.autocomplete as any) || 'off'}
             oninput={(e) => {
               const target = e.target as HTMLTextAreaElement;
               if (target) {

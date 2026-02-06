@@ -146,7 +146,7 @@
         label="Progresso da avaliação"
       />
 
-      <form method="POST" onsubmit={handleSubmit}>
+      <form method="POST" autocomplete="on" onsubmit={handleSubmit}>
         <!-- Form Intro Questions -->
         {#each formIntro as category}
           <FormSection
