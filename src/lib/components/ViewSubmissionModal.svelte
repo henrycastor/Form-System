@@ -80,17 +80,17 @@
 
 <style>
   .form-details {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    background-color: var(--light-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
   }
 
   .mb-3 {
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-md);
   }
 
   .mt-4 {
-    margin-top: 1.5rem;
+    margin-top: var(--spacing-lg);
   }
 </style>

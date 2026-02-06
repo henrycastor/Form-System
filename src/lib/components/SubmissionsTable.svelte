@@ -110,20 +110,20 @@
 
 <style>
   .admin-table-container {
-    background-color: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: 40px;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-xl);
   }
 
   .table-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: var(--spacing-lg);
     flex-wrap: wrap;
-    gap: 15px;
+    gap: var(--spacing-md);
   }
 
   .table-title {
@@ -151,7 +151,7 @@
     background-color: var(--light-bg);
     color: var(--primary-color);
     font-weight: 600;
-    padding: 15px 10px;
+    padding: var(--spacing-md) var(--spacing-sm);
     border-bottom: 2px solid var(--primary-color);
     position: relative;
   }
@@ -161,7 +161,7 @@
   }
 
   .sort-icon {
-    margin-left: 5px;
+    margin-left: var(--spacing-xs);
     float: right;
   }
 

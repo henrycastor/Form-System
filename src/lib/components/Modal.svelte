@@ -67,7 +67,7 @@
     align-items: flex-start;
     justify-content: center;
     overflow-y: auto;
-    padding: 1.75rem;
+    padding: var(--spacing-md);
     pointer-events: none;
   }
 
@@ -81,11 +81,11 @@
   }
 
   :global(.modal-dialog.modal-lg) {
-    max-width: 800px;
+    max-width: var(--form-max-width);
   }
 
   .modal-content {
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
     border: 1px solid var(--border-color);

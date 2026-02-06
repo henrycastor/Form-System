@@ -132,7 +132,7 @@
   }
   .form-card:global(.variant-3) .form-icon {
     background-color: var(--secondary-bg);
-    color: #856404;
+    color: var(--warning-color);
   }
 
   .form-card:global(.variant-4) {
