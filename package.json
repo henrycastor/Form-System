@@ -49,6 +49,7 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
+		"@internationalized/date": "^3.8.1",
 		"bits-ui": "^2.15.5",
 		"sqlite": "^5.1.1",
 		"sqlite3": "^5.1.7",
