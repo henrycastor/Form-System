@@ -18,12 +18,6 @@
     --primary-bg-light: rgba(0, 86, 166, 0.08);
     --accent-bg-light: rgba(52, 181, 229, 0.08);
 
-    /* Glassmorphism */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-    --glass-blur: blur(10px);
-
     --body-bg: #f8fafc;
     --white: #ffffff;
     --text-main: #0f172a;
