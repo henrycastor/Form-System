@@ -84,7 +84,7 @@
 }
 
 .btn-admin.filter {
-    background-color: #6c757d;
+    background-color: var(--gray-500);
 }
 
 .btn-action {
@@ -177,7 +177,7 @@
     width: 22px;
     height: 22px;
     border-radius: var(--radius-circle);
-    border: 2px solid #ccc;
+    border: 2px solid var(--border-color);
     margin-right: var(--spacing-sm);
     position: relative;
     transition: var(--transition-normal);
@@ -301,7 +301,7 @@
 
 .form-badge.form3 {
     background-color: var(--warning-bg);
-    color: #856404;
+    color: var(--warning-color);
     border: 1px solid rgba(255, 193, 7, 0.2);
 }
 

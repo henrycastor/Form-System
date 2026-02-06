@@ -84,7 +84,7 @@
 }
 
 .btn-admin.filter {
-    background-color: var(--text-muted);
+    background-color: var(--gray-500);
 }
 
 .btn-action {

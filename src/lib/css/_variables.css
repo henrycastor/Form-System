@@ -18,6 +18,11 @@
     --primary-bg-light: rgba(0, 86, 166, 0.08);
     --accent-bg-light: rgba(52, 181, 229, 0.08);
 
+    /* Gray Colors */
+    --gray-500: #6c757d;
+    --gray-400: #adb5bd;
+    --gray-300: #dee2e6;
+
     --body-bg: #f8fafc;
     --white: #ffffff;
     --text-main: #0f172a;

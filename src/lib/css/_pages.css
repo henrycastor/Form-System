@@ -264,7 +264,7 @@
 
 .form-card:nth-child(3) .form-icon {
     background-color: var(--secondary-bg);
-    color: #856404;
+    color: var(--warning-color);
 }
 
 .form-card:nth-child(4) .form-icon {
@@ -331,7 +331,7 @@
     top: 20px;
     right: 20px;
     background-color: var(--secondary-color);
-    color: #333;
+    color: var(--text-main);
     padding: 5px var(--spacing-md);
     border-radius: var(--radius-full);
     font-size: 0.9rem;

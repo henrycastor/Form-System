@@ -95,7 +95,7 @@
     .form-info-card,
     .responses-container {
         box-shadow: none;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color);
         page-break-inside: avoid;
     }
 
