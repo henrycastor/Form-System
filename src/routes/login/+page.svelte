@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { ShieldCheck, Key, AlertCircle, ArrowRight, Loader2 } from 'lucide-svelte';
+  import { ShieldCheck, Key, AlertCircle, ArrowRight, Loader } from 'lucide-svelte';
 
   let { form } = $props();
   let isLoading = $state(false);
@@ -57,7 +57,7 @@
 
       <button type="submit" class="submit-btn" disabled={isLoading}>
         {#if isLoading}
-          <Loader2 class="spin" size={20} /> Autenticando...
+          <Loader class="spin" size={20} /> Autenticando...
         {:else}
           Entrar no Painel <ArrowRight size={18} />
         {/if}

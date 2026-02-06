@@ -2,7 +2,7 @@
   import { toasts, removeToast } from './toast.ts';
   import { flip } from 'svelte/animate';
   import { fade, fly } from 'svelte/transition';
-  import { CheckCircle, XCircle, AlertTriangle, Loader2, Info, X as XIcon } from 'lucide-svelte';
+  import { CircleCheck, CircleX, TriangleAlert, Loader, Info, X as XIcon } from 'lucide-svelte';
 </script>
 
 <div class="toast-container">
@@ -16,13 +16,13 @@
     >
       <div class="toast-icon">
         {#if t.type === 'success'}
-          <CheckCircle size={22} strokeWidth={2.5} />
+          <CircleCheck size={22} strokeWidth={2.5} />
         {:else if t.type === 'error'}
-          <XCircle size={22} strokeWidth={2.5} />
+          <CircleX size={22} strokeWidth={2.5} />
         {:else if t.type === 'warning'}
-          <AlertTriangle size={22} strokeWidth={2.5} />
+          <TriangleAlert size={22} strokeWidth={2.5} />
         {:else if t.type === 'loading'}
-          <Loader2 size={22} class="spin" />
+          <Loader size={22} class="spin" />
         {:else}
           <Info size={22} strokeWidth={2.5} />
         {/if}
