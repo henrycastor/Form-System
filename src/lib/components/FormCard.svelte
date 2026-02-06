@@ -29,6 +29,8 @@
 </a>
 
 <style>
+  @import '$lib/css/_color-variants.css';
+
   .form-card-link {
     text-decoration: none;
     color: inherit;
@@ -108,70 +110,5 @@
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
     opacity: 0.9;
-  }
-
-  /* Color variations based on explicit class variant (passed via colorIndex) */
-  .form-card:global(.variant-1) {
-    border-top-color: var(--primary-color);
-  }
-  .form-card:global(.variant-1) .form-icon {
-    background-color: var(--primary-bg-light);
-    color: var(--primary-color);
-  }
-
-  .form-card:global(.variant-2) {
-    border-top-color: var(--success-color);
-  }
-  .form-card:global(.variant-2) .form-icon {
-    background-color: var(--success-bg);
-    color: var(--success-color);
-  }
-
-  .form-card:global(.variant-3) {
-    border-top-color: var(--warning-color);
-  }
-  .form-card:global(.variant-3) .form-icon {
-    background-color: var(--secondary-bg);
-    color: var(--warning-color);
-  }
-
-  .form-card:global(.variant-4) {
-    border-top-color: var(--danger-color);
-  }
-  .form-card:global(.variant-4) .form-icon {
-    background-color: var(--danger-bg);
-    color: var(--danger-color);
-  }
-
-  .form-card:global(.variant-5) {
-    border-top-color: #6f42c1;
-  }
-  .form-card:global(.variant-5) .form-icon {
-    background-color: rgba(111, 66, 193, 0.1);
-    color: #6f42c1;
-  }
-
-  .form-card:global(.variant-6) {
-    border-top-color: #17a2b8;
-  }
-  .form-card:global(.variant-6) .form-icon {
-    background-color: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
-  }
-
-  .form-card:global(.variant-7) {
-    border-top-color: var(--primary-color);
-  }
-  .form-card:global(.variant-7) .form-icon {
-    background-color: var(--primary-bg-light);
-    color: var(--primary-color);
-  }
-
-  .form-card:global(.variant-8) {
-    border-top-color: var(--success-color);
-  }
-  .form-card:global(.variant-8) .form-icon {
-    background-color: var(--success-bg);
-    color: var(--success-color);
   }
 </style>
