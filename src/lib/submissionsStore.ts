@@ -1,5 +1,3 @@
-import { writable, type Writable } from 'svelte/store';
-
 /**
  * Submission data structure
  */
@@ -15,38 +13,56 @@ export interface Submission {
 }
 
 /**
- * Svelte store for managing submissions
+ * Svelte 5 State class for submissions
  */
-export const submissions: Writable<Submission[]> = writable<Submission[]>([]);
+export class SubmissionsState {
+	private _submissions: Submission[] = $state([]);
 
-/**
- * Update submissions in the store
- */
-export function setSubmissions(data: Submission[] | null | undefined): void {
-	submissions.set(Array.isArray(data) ? data : []);
+	// Svelte 5 reactive getter
+	get submissions(): Submission[] {
+		return this._submissions;
+	}
+
+	// Svelte 5 setter
+	set submissions(value: Submission[]) {
+		this._submissions = value;
+	}
+
+	// Update submissions
+	set(data: Submission[] | null | undefined): void {
+		this._submissions = Array.isArray(data) ? data : [];
+	}
+
+	// Add a new submission
+	add(submission: Submission): void {
+		this._submissions = [submission, ...this._submissions];
+	}
+
+	// Remove a submission by ID
+	remove(id: number): void {
+		this._submissions = this._submissions.filter(item => item.id !== id);
+	}
+
+	// Update a submission by ID
+	update(id: number, updates: Partial<Submission>): void {
+		this._submissions = this._submissions.map(item =>
+			item.id === id ? { ...item, ...updates } : item
+		);
+	}
+
+	// Get submission by ID
+	getById(id: number): Submission | undefined {
+		return this._submissions.find(item => item.id === id);
+	}
+
+	// Filter submissions
+	filter(predicate: (item: Submission) => boolean): Submission[] {
+		return this._submissions.filter(predicate);
+	}
 }
 
-/**
- * Add a new submission to the store
- */
-export function addSubmission(submission: Submission): void {
-	submissions.update(items => [submission, ...(Array.isArray(items) ? items : [])]);
-}
+// Singleton instance
+export const submissionsState = new SubmissionsState();
 
-/**
- * Remove a submission from the store by ID
- */
-export function removeSubmission(id: number): void {
-	submissions.update(items => (Array.isArray(items) ? items.filter(item => item.id !== id) : []));
-}
-
-/**
- * Update a submission in the store by ID
- */
-export function updateSubmission(id: number, updates: Partial<Submission>): void {
-	submissions.update(items =>
-		Array.isArray(items)
-			? items.map(item => (item.id === id ? { ...item, ...updates } : item))
-			: []
-	);
-}
+// Re-export for convenience
+export const submissions = submissionsState;

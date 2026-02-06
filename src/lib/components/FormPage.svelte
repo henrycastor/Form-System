@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { writable } from 'svelte/store';
   import type { QuestionCategory } from '$lib/types/validation';
   import { validateIntroFields } from '$lib/validation';
 
@@ -25,33 +24,39 @@
     activePage?: string;
   } = $props();
 
-  // Create form state manually
-  const formState = writable<Record<string, any>>({
+  // Form state using Svelte 5 runes
+  let formState = $state({
     companyName: '',
     email: '',
   });
 
-  // Update form state with a new object reference to trigger reactivity
-  function updateFormState(key: string, value: any) {
-    formState.update((state) => {
-      return { ...state, [key]: value };
-    });
-  }
+  // Errors state
+  let errors = $state<Record<string, string>>({});
 
-  const errors = writable<Record<string, any>>({});
-  const delayed = writable(false);
+  // Loading state
+  let delayed = $state(false);
+
+  // Derived state - check if form is valid
+  let isFormValid = $derived(formState.companyName.trim() !== '' && formState.email.includes('@'));
+
+  // Update form state
+  function handleUpdate(key: string, value: unknown) {
+    formState = { ...formState, [key]: value };
+    // Clear error when user starts typing
+    if (errors[key]) {
+      errors = { ...errors, [key]: '' };
+    }
+  }
 
   // Submit handler
   async function handleSubmit(event: Event) {
     event.preventDefault();
 
-    const data = $formState;
-
-    // Validate intro fields using centralized validation module
-    const introErrors = validateIntroFields(data);
+    // Validate intro fields
+    const introErrors = validateIntroFields(formState);
 
     if (Object.keys(introErrors).length > 0) {
-      $errors = introErrors;
+      errors = introErrors;
 
       if (introErrors.companyName && introErrors.email) {
         toast.error('Por favor, preencha o nome da empresa e um email válido.');
@@ -64,14 +69,14 @@
     }
 
     // Clear errors
-    $errors = {};
+    errors = {};
 
     const submissionData = {
       form: formData.title,
-      ...data,
+      ...formState,
     };
 
-    $delayed = true;
+    delayed = true;
 
     try {
       const response = await fetch('/api/submissions', {
@@ -83,7 +88,7 @@
       });
 
       const result = await response.json();
-      $delayed = false;
+      delayed = false;
 
       if (result.success) {
         toast.success(
@@ -100,7 +105,7 @@
         );
       }
     } catch (error) {
-      $delayed = false;
+      delayed = false;
       console.error('Error submitting form:', error);
       toast.error(
         'Ocorreu um erro ao enviar o formulário. Tente novamente.\n\nDetalhes: ' +
@@ -128,7 +133,7 @@
 
       <!-- Progress -->
       <ProgressBar
-        formData={$formState}
+        formData={formState}
         questions={formData.questions}
         label="Progresso da avaliação"
       />
@@ -140,11 +145,11 @@
             title={category.category}
             icon={category.icon || CheckCircle}
             questions={category.questions}
-            values={$formState}
+            values={formState}
             comments={{}}
-            errors={$errors}
+            {errors}
             showIds={false}
-            onUpdate={updateFormState}
+            onchange={handleUpdate}
           />
         {/each}
 
@@ -154,11 +159,11 @@
             title={category.category || 'Seção'}
             icon={category.icon || CheckCircle}
             questions={category.questions}
-            values={$formState}
-            comments={$formState}
-            errors={$errors}
+            values={formState}
+            comments={formState}
+            {errors}
             showIds={true}
-            onUpdate={updateFormState}
+            onchange={handleUpdate}
           />
         {/each}
 
@@ -166,8 +171,8 @@
           <a href="/formularios" class="btn btn-secondary">
             <XCircle class="me-2" size={18} />Sair
           </a>
-          <button type="submit" class="btn btn-primary" disabled={$delayed}>
-            {#if $delayed}<span class="spinner-border spinner-border-sm me-2"></span>{/if}
+          <button type="submit" class="btn btn-primary" disabled={delayed}>
+            {#if delayed}<span class="spinner-border spinner-border-sm me-2"></span>{/if}
             Enviar Formulário
           </button>
         </div>

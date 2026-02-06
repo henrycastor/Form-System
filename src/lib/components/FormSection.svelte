@@ -3,7 +3,8 @@
   import { Paperclip, CheckCircle } from 'lucide-svelte';
   import { RadioGroup } from 'bits-ui';
 
-  const {
+  // Callbacks using Svelte 5 event pattern
+  let {
     title,
     icon: Icon = CheckCircle,
     questions,
@@ -11,27 +12,24 @@
     comments,
     errors,
     showIds = true,
-    onUpdate = () => {},
+    onchange,
   }: {
     title: string;
     icon?: any;
     questions: Question[];
     values: Record<string, unknown>;
     comments: Record<string, string>;
-    errors: Record<string, unknown>;
+    errors: Record<string, string>;
     showIds?: boolean;
-    onUpdate?: (key: string, value: unknown) => void;
+    onchange?: (key: string, value: unknown) => void;
   } = $props();
 
-  function getError(id: string): string {
-    const error = errors[id];
-    if (typeof error === 'string') return error;
-    if (Array.isArray(error)) return error.join(', ');
-    return '';
+  function handleValueChange(key: string, value: unknown) {
+    onchange?.(key, value);
   }
 
-  function handleValueChange(key: string, value: unknown) {
-    onUpdate(key, value);
+  function getError(id: string): string {
+    return errors[id] || '';
   }
 </script>
 
