@@ -30,6 +30,9 @@
     email: '',
   });
 
+  // Comments state for link_attachment fields
+  let comments = $state<Record<string, string>>({});
+
   // Errors state
   let errors = $state<Record<string, string>>({});
 
@@ -39,13 +42,18 @@
   // Derived state - check if form is valid
   let isFormValid = $derived(formState.companyName.trim() !== '' && formState.email.includes('@'));
 
-  // Update form state
+  // Update form state (values)
   function handleUpdate(key: string, value: unknown) {
     formState = { ...formState, [key]: value };
     // Clear error when user starts typing
     if (errors[key]) {
       errors = { ...errors, [key]: '' };
     }
+  }
+
+  // Update comments state
+  function handleCommentUpdate(key: string, value: string) {
+    comments = { ...comments, [key]: value };
   }
 
   // Submit handler
@@ -160,7 +168,7 @@
             icon={category.icon || CheckCircle}
             questions={category.questions}
             values={formState}
-            comments={formState}
+            {comments}
             {errors}
             showIds={true}
             onchange={handleUpdate}

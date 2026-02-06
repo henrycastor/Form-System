@@ -1,6 +1,6 @@
 /**
  * Comprehensive validation utilities for TypeScript/SvelteKit
- * 
+ *
  * This module contains:
  * - Input validation functions (email, strings, pagination)
  * - Data sanitization utilities
@@ -10,6 +10,27 @@
 
 import { z } from "zod";
 import type { Question, QuestionCategory, FormData, ValidationErrors, ValidationResult } from "$lib/types/validation";
+
+// ============================================================================
+// CONSTANTS - Magic numbers extracted for maintainability
+// ============================================================================
+
+export const VALIDATION_CONSTANTS = {
+	/** Maximum length for company name */
+	COMPANY_NAME_MIN_LENGTH: 2,
+	/** Maximum length for search queries */
+	SEARCH_QUERY_MAX_LENGTH: 100,
+	/** Maximum length for general text fields */
+	TEXT_FIELD_MAX_LENGTH: 5000,
+	/** Maximum length for sanitized strings */
+	SANITIZE_STRING_MAX_LENGTH: 1000,
+	/** Minimum page number for pagination */
+	PAGINATION_MIN_PAGE: 1,
+	/** Default items per page */
+	PAGINATION_DEFAULT_PER_PAGE: 10,
+	/** Maximum items per page */
+	PAGINATION_MAX_PER_PAGE: 100,
+} as const;
 
 // ============================================================================
 // BASIC VALIDATION FUNCTIONS
@@ -27,7 +48,7 @@ export function validateEmail(email: string): boolean {
 /**
  * Sanitize string input by trimming and limiting length
  */
-export function sanitizeString(value: string, maxLength = 1000): string {
+export function sanitizeString(value: string, maxLength: number = VALIDATION_CONSTANTS.SANITIZE_STRING_MAX_LENGTH): string {
 	if (typeof value !== 'string') return '';
 	return value.trim().substring(0, maxLength);
 }
@@ -35,9 +56,10 @@ export function sanitizeString(value: string, maxLength = 1000): string {
 /**
  * Validate page number for pagination
  */
-export function validatePageNumber(page: unknown, minPage = 1): number {
+export function validatePageNumber(page: unknown, minPage: number = VALIDATION_CONSTANTS.PAGINATION_MIN_PAGE): number {
 	try {
 		const pageNum = Number(page);
+		if (isNaN(pageNum)) return minPage;
 		return Math.max(pageNum, minPage);
 	} catch {
 		return minPage;
@@ -49,12 +71,12 @@ export function validatePageNumber(page: unknown, minPage = 1): number {
  */
 export function validatePerPage(
 	perPage: unknown,
-	maxPerPage = 100,
-	defaultValue = 10
+	maxPerPage: number = VALIDATION_CONSTANTS.PAGINATION_MAX_PER_PAGE,
+	defaultValue: number = VALIDATION_CONSTANTS.PAGINATION_DEFAULT_PER_PAGE
 ): number {
 	try {
 		const value = Number(perPage);
-		if (value <= 0) return defaultValue;
+		if (isNaN(value) || value <= 0) return defaultValue;
 		return Math.min(value, maxPerPage);
 	} catch {
 		return defaultValue;
@@ -63,12 +85,20 @@ export function validatePerPage(
 
 /**
  * Validate and sanitize search query
+ * Note: For SQL injection prevention, rely on parameterized queries in database operations.
+ * This function provides basic sanitization for display/logging purposes only.
  */
-export function validateSearchQuery(query: string, maxLength = 100): string {
+export function validateSearchQuery(query: string, maxLength: number = VALIDATION_CONSTANTS.SEARCH_QUERY_MAX_LENGTH): string {
 	if (typeof query !== 'string') return '';
+
+	// Trim to max length
 	let sanitized = query.trim().substring(0, maxLength);
-	// Remove SQL injection characters
-	sanitized = sanitized.replace(/[;'"%]/g, '');
+
+	// Basic sanitization for potentially dangerous characters
+	// This is a defense-in-depth measure; primary SQL injection prevention is via parameterized queries
+	const dangerousPattern = /[;'"\\]/g;
+	sanitized = sanitized.replace(dangerousPattern, '');
+
 	return sanitized;
 }
 
@@ -97,8 +127,8 @@ export function validateSubmissionData(
 	// Validate company name if present
 	if ('companyName' in data) {
 		const companyName = data.companyName;
-		if (typeof companyName !== 'string' || companyName.trim().length < 2) {
-			errors.push('Company name must be at least 2 characters');
+		if (typeof companyName !== 'string' || companyName.trim().length < VALIDATION_CONSTANTS.COMPANY_NAME_MIN_LENGTH) {
+			errors.push(`Company name must be at least ${VALIDATION_CONSTANTS.COMPANY_NAME_MIN_LENGTH} characters`);
 		}
 	}
 
@@ -112,8 +142,8 @@ export function validateSubmissionData(
 
 	// Validate string length limits
 	for (const [key, value] of Object.entries(data)) {
-		if (typeof value === 'string' && value.length > 5000) {
-			errors.push(`Field '${key}' exceeds maximum length of 5000 characters`);
+		if (typeof value === 'string' && value.length > VALIDATION_CONSTANTS.TEXT_FIELD_MAX_LENGTH) {
+			errors.push(`Field '${key}' exceeds maximum length of ${VALIDATION_CONSTANTS.TEXT_FIELD_MAX_LENGTH} characters`);
 		}
 	}
 
@@ -177,8 +207,8 @@ export const validateFormData = (data: FormData, schema: z.ZodObject<z.ZodRawSha
 export const validateIntroFields = (data: FormData): ValidationErrors => {
 	const errors: ValidationErrors = {};
 
-	if (!data.companyName || (typeof data.companyName === 'string' && data.companyName.trim().length < 2)) {
-		errors.companyName = "Nome da empresa é obrigatório (mínimo 2 caracteres)";
+	if (!data.companyName || (typeof data.companyName === 'string' && data.companyName.trim().length < VALIDATION_CONSTANTS.COMPANY_NAME_MIN_LENGTH)) {
+		errors.companyName = `Nome da empresa é obrigatório (mínimo ${VALIDATION_CONSTANTS.COMPANY_NAME_MIN_LENGTH} caracteres)`;
 	}
 
 	if (!data.email || !validateEmail(String(data.email))) {

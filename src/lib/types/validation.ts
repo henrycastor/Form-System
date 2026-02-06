@@ -3,6 +3,13 @@
  */
 
 /**
+ * Additional properties that can be attached to a question
+ */
+export interface QuestionExtra {
+	[key: string]: unknown;
+}
+
+/**
  * Represents a question in a form section
  */
 export interface Question {
@@ -10,6 +17,14 @@ export interface Question {
 	text: string;
 	type?: string;
 	link_attachment?: string;
+	/** Additional properties for extensibility */
+	extra?: QuestionExtra;
+}
+
+/**
+ * Additional properties that can be attached to a category
+ */
+export interface CategoryExtra {
 	[key: string]: unknown;
 }
 
@@ -18,17 +33,19 @@ export interface Question {
  */
 export interface QuestionCategory {
 	category?: string;
-	icon?: any;
+	icon?: unknown;
 	questions: Question[];
-	[key: string]: unknown;
+	/** Additional properties for extensibility */
+	extra?: CategoryExtra;
 }
 
 /**
- * Form submission data
+ * Form submission data with known fields and index signature for dynamic fields
  */
 export interface FormData {
 	companyName?: string;
 	email?: string;
+	/** Allow dynamic field access while maintaining type safety for known fields */
 	[key: string]: unknown;
 }
 
