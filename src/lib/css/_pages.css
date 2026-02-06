@@ -194,7 +194,7 @@
         text-decoration: none;
         color: inherit;
         display: block;
-        transition: transform 0.3s ease;
+        transition: transform var(--transition-normal);
     }
 
     .form-card-link:hover {
@@ -333,7 +333,7 @@
     background-color: var(--secondary-color);
     color: #333;
     padding: 5px var(--spacing-md);
-    border-radius: 20px;
+    border-radius: var(--radius-full);
     font-size: 0.9rem;
     font-weight: 600;
     z-index: 10;
