@@ -122,6 +122,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Protected routes pattern
     const isAdminRoute = event.url.pathname.startsWith('/painel_administracao');
+
     const isApiSubmissionAdmin = event.url.pathname.startsWith('/api/submissions') && event.request.method !== 'POST';
 
     // Check if this is an API/XHR request (fetch from client-side)
@@ -152,9 +153,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     // If session exists but we are on login, redirect to admin
-    if (event.url.pathname === '/login' && session) {
-        throw redirect(303, '/painel_administracao');
-    }
+
 
     const response = await resolve(event);
 
