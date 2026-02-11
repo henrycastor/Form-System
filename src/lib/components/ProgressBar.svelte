@@ -24,19 +24,31 @@
   function calculateProgress(): number {
     let count = 0;
 
-    requiredFields.forEach((field: string) => {
-      if (formData[field]) count++;
-    });
-
-    questions.forEach((cat: QuestionCategory) => {
-      cat.questions.forEach((q) => {
-        if (formData[q.id]) count++;
+    // Handle required fields array
+    if (requiredFields && Array.isArray(requiredFields)) {
+      requiredFields.forEach((field: string) => {
+        if (formData[field]) count++;
       });
-    });
+    }
+
+    // Handle questions array with null checks
+    if (questions && Array.isArray(questions)) {
+      questions.forEach((cat: QuestionCategory) => {
+        if (cat && cat.questions && Array.isArray(cat.questions)) {
+          cat.questions.forEach((q) => {
+            if (formData[q?.id]) count++;
+          });
+        }
+      });
+    }
 
     const total =
-      questions.reduce((acc: number, cat: QuestionCategory) => acc + cat.questions.length, 0) +
-      requiredFields.length;
+      questions.reduce(
+        (acc: number, cat: QuestionCategory) => acc + (cat?.questions?.length || 0),
+        0
+      ) + (requiredFields?.length || 0);
+
+    if (total === 0) return 0;
     return Math.round((count / total) * 100);
   }
 

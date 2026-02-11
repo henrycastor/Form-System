@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { Question } from '$lib/types/validation';
-  import { Paperclip, CheckCircle } from 'lucide-svelte';
+  import { Paperclip, CircleCheck } from 'lucide-svelte';
   import { RadioGroup } from 'bits-ui';
 
   // Callbacks using Svelte 5 event pattern
   let {
     title,
-    icon: Icon = CheckCircle,
+    icon: Icon = CircleCheck,
     questions,
     values,
     comments,

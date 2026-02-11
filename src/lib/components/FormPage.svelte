@@ -8,7 +8,7 @@
   import FormSection from '$lib/components/FormSection.svelte';
   import { toast } from '$lib/components/toast';
   import { formIntro } from '$lib/form/formIntro';
-  import { XCircle, CheckCircle } from 'lucide-svelte';
+  import { CircleX, CircleCheck } from 'lucide-svelte';
 
   // Props
   const {
@@ -151,7 +151,7 @@
         {#each formIntro as category}
           <FormSection
             title={category.category}
-            icon={category.icon || CheckCircle}
+            icon={category.icon || CircleCheck}
             questions={category.questions}
             values={formState}
             comments={{}}
@@ -165,7 +165,7 @@
         {#each formData.questions as category}
           <FormSection
             title={category.category || 'Seção'}
-            icon={category.icon || CheckCircle}
+            icon={category.icon || CircleCheck}
             questions={category.questions}
             values={formState}
             {comments}
@@ -177,7 +177,7 @@
 
         <div class="form-actions mb-5">
           <a href="/formularios" class="btn btn-secondary">
-            <XCircle class="me-2" size={18} />Sair
+            <CircleX class="me-2" size={18} />Sair
           </a>
           <button type="submit" class="btn btn-primary" disabled={delayed}>
             {#if delayed}<span class="spinner-border spinner-border-sm me-2"></span>{/if}

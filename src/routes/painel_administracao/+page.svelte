@@ -51,7 +51,7 @@
     recent: Array.isArray($submissions) ? Math.ceil($submissions.length * 0.1) : 0,
   });
 
-  import { FileText, Clock, CheckCircle, Calendar } from 'lucide-svelte';
+  import { FileText, Clock, CircleCheck, Calendar } from 'lucide-svelte';
 
   const statConfig: StatConfigItem[] = [
     {
@@ -68,7 +68,7 @@
     },
     {
       key: 'completed',
-      icon: CheckCircle,
+      icon: CircleCheck,
       label: 'Completos',
       color: 'var(--success-color)',
     },
