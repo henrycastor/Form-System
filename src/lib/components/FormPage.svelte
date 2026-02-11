@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { QuestionCategory } from '$lib/types/validation';
-  import { validateIntroFields } from '$lib/validation';
+  import { validateIntroFields, validateAllQuestionsAnswered } from '$lib/validation';
 
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
@@ -39,8 +39,14 @@
   // Loading state
   let delayed = $state(false);
 
-  // Derived state - check if form is valid
-  let isFormValid = $derived(formState.companyName.trim() !== '' && formState.email.includes('@'));
+  // Derived state - check if intro fields are valid
+  let isIntroValid = $derived(formState.companyName.trim() !== '' && formState.email.includes('@'));
+
+  // Derived state - check if all questions are answered
+  let questionValidation = $derived(validateAllQuestionsAnswered(formState, formData.questions));
+
+  // Derived state - overall form is valid when intro AND all questions are complete
+  let isFormComplete = $derived(isIntroValid && questionValidation.isValid);
 
   // Update form state (values)
   function handleUpdate(key: string, value: unknown) {
@@ -62,6 +68,17 @@
 
     // Validate intro fields
     const introErrors = validateIntroFields(formState);
+
+    // Check if all questions are answered
+    const questionCheck = validateAllQuestionsAnswered(formState, formData.questions);
+
+    if (!questionCheck.isValid) {
+      errors = { ...errors, [questionCheck.missingIds[0]]: 'Esta pergunta é obrigatória.' };
+      toast.error(
+        `Por favor, responda todas as perguntas. Faltam ${questionCheck.missingIds.length} perguntas.`
+      );
+      return;
+    }
 
     if (Object.keys(introErrors).length > 0) {
       errors = introErrors;
@@ -179,7 +196,7 @@
           <a href="/formularios" class="btn btn-secondary">
             <CircleX class="me-2" size={18} />Sair
           </a>
-          <button type="submit" class="btn btn-primary" disabled={delayed}>
+          <button type="submit" class="btn btn-primary" disabled={delayed || !isFormComplete}>
             {#if delayed}<span class="spinner-border spinner-border-sm me-2"></span>{/if}
             Enviar Formulário
           </button>

@@ -217,3 +217,41 @@ export const validateIntroFields = (data: FormData): ValidationErrors => {
 
 	return errors;
 };
+
+/**
+ * Check if all questions in the form have been answered
+ * @param data - The form data object
+ * @param questions - The form questions to validate
+ * @returns Object with isValid flag and count of answered/total questions
+ */
+export function validateAllQuestionsAnswered(
+	data: Record<string, unknown>,
+	questions: QuestionCategory[]
+): { isValid: boolean; answered: number; total: number; missingIds: string[] } {
+	const allQuestionIds: string[] = [];
+
+	// Collect all question IDs from all categories
+	questions.forEach((category) => {
+		category.questions.forEach((q) => {
+			allQuestionIds.push(q.id);
+		});
+	});
+
+	const missingIds: string[] = [];
+
+	// Check each question ID has a truthy value in the form data
+	allQuestionIds.forEach((id) => {
+		const value = data[id];
+		// Check if value is truthy (not empty string, null, undefined)
+		if (!value || (typeof value === 'string' && value.trim() === '')) {
+			missingIds.push(id);
+		}
+	});
+
+	return {
+		isValid: missingIds.length === 0,
+		answered: allQuestionIds.length - missingIds.length,
+		total: allQuestionIds.length,
+		missingIds,
+	};
+}
