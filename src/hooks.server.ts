@@ -132,6 +132,15 @@ export const handle: Handle = async ({ event, resolve }) => {
     const isApiRequest = isApiPath && (accept.includes('application/json') || contentType.includes('application/json') || event.request.method !== 'GET');
 
     if ((isAdminRoute || isApiSubmissionAdmin) && !session) {
+        // Handle browser navigation to API routes (redirect to login)
+        const fetchDest = event.request.headers.get('sec-fetch-dest');
+
+        if (event.url.pathname.startsWith('/api/') &&
+            (fetchDest === 'document' || accept.includes('text/html'))) {
+            console.log(`[DEBUG] Browser navigation to protected API ${event.url.pathname} - redirecting to login`);
+            throw redirect(303, '/login');
+        }
+
         // For API requests, return 401 JSON instead of redirect
         if (event.url.pathname.startsWith('/api/')) {
             console.log(`[DEBUG] API request to ${event.url.pathname} without session - returning 401`);
