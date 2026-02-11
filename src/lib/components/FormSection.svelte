@@ -95,14 +95,14 @@
             >Comentários (opcional)</label
           >
           <textarea
-            id="{q.id}-comment"
+            id="{q.id}-cmt"
             class="form-control form-control-sm"
             rows="2"
-            value={comments[`${q.id}_comment`] || ''}
+            value={comments[`${q.id}_cmt`] || ''}
             oninput={(e) => {
               const target = e.target as HTMLTextAreaElement;
               if (target) {
-                handleValueChange(`${q.id}_comment`, target.value);
+                handleValueChange(`${q.id}_cmt`, target.value);
               }
             }}
             placeholder="Adicione um comentário..."

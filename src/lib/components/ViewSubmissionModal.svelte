@@ -39,16 +39,17 @@
 
       {#if item?.data}
         <h5 class="mb-3 mt-4">Respostas do Formulário</h5>
-        {#each getQuestionsForForm(item.title) as question}
-          {#if item.data?.[String(question.id)] !== undefined}
+        {@const questions = getQuestionsForForm(item?.title || '')}
+        {#each questions as question}
+          {#if question && question.id && item.data?.[String(question.id)] !== undefined}
             {@const rawValue = item.data[String(question.id)]}
             {@const displayValue = formatDisplayValue(rawValue)}
             <FormDetailItem
               label={question.text}
               value={displayValue}
-              comment={String(item.data[String(question.id) + '_comment'] || '')}
+              comment={String(item.data[String(question.id) + '_cmt'] || '')}
             />
-          {:else}
+          {:else if question && question.id}
             <FormDetailItem
               label={question.text}
               value={`Resposta não encontrada para: ${question.id}`}

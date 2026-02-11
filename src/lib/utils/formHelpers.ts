@@ -37,12 +37,10 @@ export function getQuestionsForForm(formName: string): Question[] {
 	);
 
 	if (!form) {
-		console.warn(`Form not found for title: ${formName}`);
 		return introQuestions;
 	}
 
 	if (!form.questions) {
-		console.warn(`Form "${formName}" does not have questions defined`);
 		return introQuestions;
 	}
 

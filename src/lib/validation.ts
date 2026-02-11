@@ -170,8 +170,8 @@ export const buildDynamicSchema = (questions: QuestionCategory[]) => {
 			initialData[q.id] = "";
 
 			if (q.link_attachment) {
-				dynamicSchema[`${q.id}_comment`] = z.string().optional();
-				initialData[`${q.id}_comment`] = "";
+				dynamicSchema[`${q.id}_cmt`] = z.string().optional();
+				initialData[`${q.id}_cmt`] = "";
 			}
 		});
 	});
