@@ -57,7 +57,9 @@
     background-color: var(--primary-bg-light);
     color: var(--primary-color);
     border: 1px solid rgba(0, 86, 166, 0.1);
-    white-space: nowrap;
+    max-width: 200px;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .action-buttons {
@@ -104,10 +106,17 @@
     box-shadow: var(--shadow-sm);
   }
 
+  tr td {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    vertical-align: middle;
+  }
+
   .date-cell {
     color: var(--text-muted);
     font-size: 0.9rem;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   .status-cell {
