@@ -111,7 +111,7 @@
       {/if}
     </tbody>
   </table>
-  <PaginationInfo count={allFilteredSubmissions.length} bind:page={currentPage} {perPage} />
+  <PaginationInfo count={allFilteredSubmissions.length} bind:page={currentPage} bind:perPage />
 </div>
 
 <style>

@@ -39,15 +39,16 @@
   {#snippet body()}
     <div id="printable-content">
       <div class="form-details">
-        <FormDetailItem label="Nome Completo" value={item?.name} />
         <FormDetailItem label="Formulário" value={getFormTitle(item)} />
-        <FormDetailItem label="Data de Envio" value={formatDate(item?.date)} />
-        <FormDetailItem
-          label="Status"
-          value={item?.status === 'completed' ? 'Completo' : 'Pendente de revisão'}
-          isSuccess={item?.status === 'completed'}
-          isWarning={item?.status !== 'completed'}
-        />
+        <div class="form-details-row">
+          <FormDetailItem label="Data de Envio" value={formatDate(item?.date)} />
+          <FormDetailItem
+            label="Status"
+            value={item?.status === 'completed' ? 'Completo' : 'Pendente de revisão'}
+            isSuccess={item?.status === 'completed'}
+            isWarning={item?.status !== 'completed'}
+          />
+        </div>
       </div>
 
       {#if item?.data}
@@ -100,6 +101,13 @@
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
+  }
+
+  .form-details-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
   }
 
   .mb-3 {

@@ -13,7 +13,9 @@
     page: number;
   } = $props();
 
-  // Ensure perPage is valid on initial render and count change
+  // Track first render to only validate perPage once
+  let isFirstRender = $state(true);
+
   $effect(() => {
     const allOptions = [5, 10, 20, 50];
     const availableOptions = allOptions.filter((option) => option <= count);
@@ -33,9 +35,15 @@
       options = availableOptions;
     }
 
-    // Ensure perPage is valid for the current options
-    if (!options.includes(perPage)) {
-      perPage = options[options.length - 1]; // Use largest available option
+    // Only validate perPage on first render, not on every count change
+    if (isFirstRender) {
+      isFirstRender = false;
+
+      // Ensure perPage is valid for the current options
+      if (!options.includes(perPage)) {
+        perPage = options[options.length - 1];
+        page = 1; // Reset to first page when perPage changes
+      }
     }
   });
 
