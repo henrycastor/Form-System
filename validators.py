@@ -121,9 +121,13 @@ def validate_page_number(page: Any, min_page: int = 1) -> int:
         Valid page number
     """
     try:
+        # Handle cases like infinity or NaN which can't be converted to int
+        if isinstance(page, float) and (page == float('inf') or page == float('-inf') or page != page):
+            return min_page
+            
         page_num = int(page)
         return max(page_num, min_page)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return min_page
 
 
@@ -165,4 +169,9 @@ def validate_search_query(query: str, max_length: int = 100) -> str:
     sanitized = query.strip()[:max_length]
     # Remove dangerous SQL characters
     sanitized = re.sub(r'[;\'"%]', '', sanitized)
+    # Remove common SQL keywords to prevent basic injection
+    sql_keywords = r'\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|TABLE|FROM|WHERE)\b'
+    sanitized = re.sub(sql_keywords, '', sanitized, flags=re.IGNORECASE)
+    # Clean up multiple spaces left by removal
+    sanitized = re.sub(r'\s+', ' ', sanitized).strip()
     return sanitized

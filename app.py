@@ -115,6 +115,33 @@ class SvelteKitExecutor:
         self.run_command(['run', 'prepare'])
         print("SvelteKit synced successfully!")
 
+    def test(self, target='all'):
+        """Run tests."""
+        if target in ['all', 'python']:
+            print("Running Python tests...")
+            venv_python = self.project_dir / 'venv' / 'bin' / 'python3'
+            if not venv_python.exists():
+                venv_python = 'python3'
+            
+            try:
+                subprocess.run(
+                    [str(venv_python), '-m', 'pytest', 'tests/python', '-v'],
+                    cwd=self.project_dir,
+                    check=True
+                )
+                print("Python tests passed!")
+            except subprocess.CalledProcessError:
+                print("Python tests failed!")
+                if target == 'python': sys.exit(1)
+        
+        if target in ['all', 'unit']:
+            print("\nRunning SvelteKit unit tests...")
+            self.run_command(['run', 'test:unit'], check=False)
+            
+        if target in ['all', 'e2e']:
+            print("\nRunning SvelteKit E2E tests...")
+            self.run_command(['run', 'test:e2e'], check=False)
+
 
 def main():
     """Main entry point for the application."""
@@ -134,7 +161,7 @@ Examples:
     
     parser.add_argument(
         'command',
-        choices=['dev', 'build', 'preview', 'install', 'check', 'sync'],
+        choices=['dev', 'build', 'preview', 'install', 'check', 'sync', 'test'],
         help='Command to execute'
     )
     
@@ -148,6 +175,13 @@ Examples:
         '--port',
         type=int,
         help='Port to use (default: 5173 for dev, 4173 for preview)'
+    )
+
+    parser.add_argument(
+        '--target',
+        choices=['all', 'python', 'unit', 'e2e'],
+        default='all',
+        help='Test target (default: all)'
     )
     
     parser.add_argument(
@@ -175,6 +209,8 @@ Examples:
         executor.check()
     elif args.command == 'sync':
         executor.sync()
+    elif args.command == 'test':
+        executor.test(args.target)
 
 
 if __name__ == '__main__':
