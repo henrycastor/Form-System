@@ -134,3 +134,34 @@ export function printElement(elementId: string): void {
 		}, 500);
 	}
 }
+
+/**
+ * Checks if a subtitle should be shown
+ */
+export function shouldShowSubtitle(subtitle: string | null | undefined): boolean {
+	return !!subtitle && subtitle.trim() !== "";
+}
+
+/**
+ * Formats a boolean value as Sim/Não
+ */
+export function formatBoolean(value: boolean): string {
+	return value ? "Sim" : "Não";
+}
+
+/**
+ * Checks if a comment should be shown
+ */
+export function shouldShowComment(comment: string | null | undefined): boolean {
+	return !!comment && comment.trim() !== "";
+}
+
+/**
+ * Returns the CSS class for a value based on success/warning status
+ */
+export function getValueClass(isSuccess: boolean, isWarning: boolean): string {
+	if (isSuccess) return "text-success";
+	if (isWarning) return "text-warning";
+	return "";
+}
+

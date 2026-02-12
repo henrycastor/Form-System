@@ -1,34 +1,10 @@
 import { redirect, error, type Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
-// Basic Rate Limiter Implementation
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 500; // Increased from 100
-const LOGIN_RATE_LIMIT = 50; // Increased from 10
-const ipCache = new Map<string, { count: number; resetTime: number }>();
+import { isRateLimited, MAX_REQUESTS_PER_WINDOW, LOGIN_RATE_LIMIT, startCleanupInterval } from '$lib/utils/rateLimiter';
 
-function isRateLimited(ip: string, limit: number = MAX_REQUESTS_PER_WINDOW): boolean {
-    const now = Date.now();
-    const rateData = ipCache.get(ip);
-
-    if (!rateData || now > rateData.resetTime) {
-        ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-        return false;
-    }
-
-    rateData.count++;
-    return rateData.count > limit;
-}
-
-// Cleanup cache periodically
-setInterval(() => {
-    const now = Date.now();
-    for (const [ip, data] of ipCache.entries()) {
-        if (now > data.resetTime) {
-            ipCache.delete(ip);
-        }
-    }
-}, 5 * 60 * 1000); // Every 5 minutes
+// Start cleanup interval
+startCleanupInterval();
 
 export const handle: Handle = async ({ event, resolve }) => {
     let clientAddress = '127.0.0.1';

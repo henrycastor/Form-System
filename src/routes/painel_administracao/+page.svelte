@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
-  import type { Submission } from '$lib/submissionsStore'; // Import only the type
+  import type { Submission } from '$lib/submissionsStore.svelte'; // Import only the type
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import StatCard from '$lib/components/StatCard.svelte';

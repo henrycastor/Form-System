@@ -8,7 +8,7 @@ import {
   validateSubmissionData,
   validateIntroFields,
   VALIDATION_CONSTANTS,
-} from '../../src/lib/validation';
+} from '$lib/validation';
 
 describe('validation constants', () => {
   it('should have all required constants defined', () => {

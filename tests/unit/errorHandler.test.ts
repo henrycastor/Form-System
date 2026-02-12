@@ -4,7 +4,7 @@ import {
     safeExecute,
     isApiError,
     createErrorResponse
-} from '../../src/lib/utils/errorHandler';
+} from '$lib/utils/errorHandler';
 
 describe('formatApiError', () => {
     it('should format error with default message and status', () => {

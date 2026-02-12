@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import type { Submission } from '$lib/submissionsStore';
+import type { Submission } from '$lib/submissionsStore.svelte';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const response = await fetch('/api/submissions');

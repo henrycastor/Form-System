@@ -1,21 +1,11 @@
+import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-import path from 'path';
 
 export default defineConfig({
+  plugins: [sveltekit()],
   test: {
-    environment: 'node',
+    include: ['tests/unit/**/*.{test,spec}.ts'],
+    environment: 'jsdom',
     globals: true,
-    exclude: [
-      'tests/e2e/**',
-      'tests/python/**'
-    ],
-    coverage: {
-      provider: 'istanbul'
-    }
-  },
-  resolve: {
-    alias: {
-      '$lib': path.resolve(__dirname, 'src/lib')
-    }
   }
 });

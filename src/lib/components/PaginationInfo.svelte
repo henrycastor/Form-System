@@ -3,6 +3,8 @@
   import { Select } from 'bits-ui';
   import { ChevronLeft, ChevronRight, MoreHorizontal, Check, ChevronsUpDown } from 'lucide-svelte';
 
+  import { getAvailablePerPageOptions } from '$lib/utils/adminHelpers';
+
   let {
     count,
     perPage = $bindable(10),
@@ -17,23 +19,7 @@
   let isFirstRender = $state(true);
 
   $effect(() => {
-    const allOptions = [5, 10, 20, 50];
-    const availableOptions = allOptions.filter((option) => option <= count);
-
-    let options;
-
-    // If no standard options are available (count < 5), show the actual count
-    if (availableOptions.length === 0 && count > 0) {
-      options = [count];
-    }
-    // If count === 0, show default
-    else if (count === 0) {
-      options = [10];
-    }
-    // Otherwise, use standard options
-    else {
-      options = availableOptions;
-    }
+    const options = getAvailablePerPageOptions(count);
 
     // Only validate perPage on first render, not on every count change
     if (isFirstRender) {
@@ -46,28 +32,6 @@
       }
     }
   });
-
-  function getAvailablePerPageOptions() {
-    const allOptions = [5, 10, 20, 50];
-    const availableOptions = allOptions.filter((option) => option <= count);
-
-    let options;
-
-    // If no standard options are available (count < 5), show the actual count
-    if (availableOptions.length === 0 && count > 0) {
-      options = [count];
-    }
-    // If count === 0, show default
-    else if (count === 0) {
-      options = [10];
-    }
-    // Otherwise, use standard options
-    else {
-      options = availableOptions;
-    }
-
-    return options;
-  }
 
   function handlePerPageChange(value: string) {
     perPage = Number(value);
@@ -92,7 +56,7 @@
             <Select.Content class="select-content">
               <Select.Viewport>
                 <Select.Group>
-                  {#each getAvailablePerPageOptions() as val}
+                  {#each getAvailablePerPageOptions(count) as val}
                     <Select.Item value={String(val)} label={String(val)} class="select-item">
                       {#snippet children({ selected })}
                         {val}
