@@ -9,13 +9,18 @@ import type { Question, QuestionCategory } from "$lib/types/validation";
  * Creates a map of forms by their title for efficient lookup
  */
 export function createFormsByTitleMap(): Record<string, any> {
-	return forms.reduce(
+	const formsByTitle = forms.reduce(
 		(acc, form) => {
 			acc[form.title] = form;
 			return acc;
 		},
 		{} as Record<string, any>,
 	);
+
+	// Also include formIntro as a form so submissions with "Intro" title can be found
+	formsByTitle['Intro'] = { title: 'Intro', questions: formIntro };
+
+	return formsByTitle;
 }
 
 /**
@@ -37,17 +42,41 @@ export function getQuestionsForForm(formName: string): Question[] {
 	);
 
 	if (!form) {
-		return introQuestions;
+		// If form not found, return intro questions combined with questions from all available forms
+		const allFormQuestions = forms.flatMap((formItem) => {
+			const questions = formItem.questions as any[] | undefined;
+			if (!questions) return [];
+			// Check if questions are categories or plain questions
+			const firstItem = questions[0];
+			if (firstItem && typeof firstItem === 'object' && 'category' in firstItem) {
+				// Questions are wrapped in categories
+				return (questions as QuestionCategory[]).flatMap((cat) => cat.questions);
+			} else {
+				// Questions are plain questions (like form1)
+				return questions as Question[];
+			}
+		});
+		return [...introQuestions, ...allFormQuestions];
 	}
 
 	if (!form.questions) {
 		return introQuestions;
 	}
 
-	// Get questions from the regular form
-	const formQuestions = form.questions.flatMap(
-		(category: QuestionCategory) => category.questions,
-	);
+	// Check if form.questions are categories or plain questions
+	const questions = form.questions as any[];
+	const firstItem = questions[0];
+	let formQuestions: Question[];
+
+	if (firstItem && typeof firstItem === 'object' && 'category' in firstItem) {
+		// Questions are wrapped in categories
+		formQuestions = (questions as QuestionCategory[]).flatMap(
+			(category: QuestionCategory) => category.questions,
+		);
+	} else {
+		// Questions are plain questions (like form1)
+		formQuestions = questions as Question[];
+	}
 
 	// Combine intro questions with form questions
 	return [...introQuestions, ...formQuestions];
