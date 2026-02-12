@@ -5,6 +5,8 @@
   import type { Submission, TableHeader, ModalCallback } from '$lib/types/admin';
   import { ChevronUp, ChevronDown } from 'lucide-svelte';
 
+  import { filterSubmissions, sortSubmissions } from '$lib/utils/adminHelpers';
+
   let {
     submissions = [],
     searchQuery = $bindable(''),
@@ -45,22 +47,8 @@
   }
 
   let allFilteredSubmissions = $derived.by(() => {
-    const query = searchQuery.toLowerCase();
-    const filtered = submissions.filter((s: Submission) => {
-      const name = s.name || '';
-      const form = s.title || '';
-
-      return name.toLowerCase().includes(query) || form.toLowerCase().includes(query);
-    });
-
-    return filtered.sort((a: Submission, b: Submission) => {
-      const valA = (a[sortColumn as keyof Submission] as string | number) ?? '';
-      const valB = (b[sortColumn as keyof Submission] as string | number) ?? '';
-
-      if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
+    const filtered = filterSubmissions(submissions, searchQuery);
+    return sortSubmissions(filtered, sortColumn, sortDirection);
   });
 
   let paginatedSubmissions = $derived.by(() => {

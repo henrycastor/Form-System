@@ -10,7 +10,9 @@ import {
     calculateRange,
     getStatValue,
     getStatCardClass,
-    isEmptySearch
+    isEmptySearch,
+    filterSubmissions,
+    sortSubmissions
 } from '$lib/utils/adminHelpers';
 
 describe('Admin Panel Logic', () => {
@@ -43,6 +45,50 @@ describe('Admin Panel Logic', () => {
 
         it('should return 0 for non-existing key', () => {
             expect(getStatValue({ total: 10 }, 'pending')).toBe(0);
+        });
+    });
+
+    describe('Submission Filtering', () => {
+        const mockSubmissions = [
+            { name: 'Alpha', title: 'Form A' },
+            { name: 'Beta', title: 'Form B' },
+            { name: 'Gamma', title: 'Form C' }
+        ];
+
+        it('should filter by name', () => {
+            const result = filterSubmissions(mockSubmissions, 'alpha');
+            expect(result).toHaveLength(1);
+            expect(result[0].name).toBe('Alpha');
+        });
+
+        it('should filter by title', () => {
+            const result = filterSubmissions(mockSubmissions, 'form b');
+            expect(result).toHaveLength(1);
+            expect(result[0].title).toBe('Form B');
+        });
+
+        it('should return all when query is empty', () => {
+            expect(filterSubmissions(mockSubmissions, '')).toHaveLength(3);
+        });
+    });
+
+    describe('Submission Sorting', () => {
+        const mockSubmissions = [
+            { id: 2, name: 'Zebra' },
+            { id: 1, name: 'Apple' },
+            { id: 3, name: 'Mango' }
+        ];
+
+        it('should sort by name ascending', () => {
+            const result = sortSubmissions(mockSubmissions, 'name', 'asc');
+            expect(result[0].name).toBe('Apple');
+            expect(result[2].name).toBe('Zebra');
+        });
+
+        it('should sort by name descending', () => {
+            const result = sortSubmissions(mockSubmissions, 'name', 'desc');
+            expect(result[0].name).toBe('Zebra');
+            expect(result[2].name).toBe('Apple');
         });
     });
 });

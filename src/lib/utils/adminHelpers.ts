@@ -48,3 +48,36 @@ export function getStatValue(stats: Record<string, number> | undefined, key: str
 export function isEmptySearch(query: string | null | undefined): boolean {
     return !query || query.trim() === '';
 }
+
+/**
+ * Filters submissions based on name or title
+ */
+export function filterSubmissions(submissions: any[], query: string): any[] {
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return submissions;
+
+    return submissions.filter((s) => {
+        const name = s.name || '';
+        const title = s.title || '';
+        return name.toLowerCase().includes(lowerQuery) ||
+            title.toLowerCase().includes(lowerQuery);
+    });
+}
+
+/**
+ * Sorts submissions based on a column and direction
+ */
+export function sortSubmissions(
+    submissions: any[],
+    column: string,
+    direction: 'asc' | 'desc'
+): any[] {
+    return [...submissions].sort((a, b) => {
+        const valA = a[column] ?? '';
+        const valB = b[column] ?? '';
+
+        if (valA < valB) return direction === 'asc' ? -1 : 1;
+        if (valA > valB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
