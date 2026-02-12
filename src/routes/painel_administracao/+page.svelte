@@ -6,7 +6,7 @@
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import StatCard from '$lib/components/StatCard.svelte';
-  import SubmissionsTable from '$lib/components/SubmissionsTable.svelte';
+  import SubmissionTable from '$lib/components/SubmissionTable.svelte';
   import ViewSubmissionModal from '$lib/components/ViewSubmissionModal.svelte';
   import DeleteSubmissionModal from '$lib/components/DeleteSubmissionModal.svelte';
   import { toast } from '$lib/components/toast';
@@ -133,7 +133,7 @@
         <StatCard {stats} {statConfig} />
 
         <!-- Tabela de Formulários -->
-        <SubmissionsTable
+        <SubmissionTable
           submissions={$submissions}
           headers={tableHeaders}
           {searchQuery}
