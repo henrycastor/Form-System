@@ -28,7 +28,6 @@ export interface TableHeader {
 export interface Submission {
 	id?: string | number;
 	name: string;
-	sector: string;
 	title: string;
 	date?: string | number;
 	submitted_at?: string | number;

@@ -148,7 +148,6 @@ describe('submissionService Helpers', () => {
                 formId: 'form1',
                 companyName: 'Test',
                 email: 'test@test.com',
-                sector: 'IT',
                 date: '2024-01-15'
             };
 

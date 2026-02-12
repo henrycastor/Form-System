@@ -15,7 +15,6 @@ interface ParsedSubmission {
 	id: number;
 	submitted_at: string;
 	name: string;
-	sector: string;
 	title: string;
 	date: string;
 	status: string;
@@ -41,7 +40,7 @@ const parseSubmissionData = (jsonString: string): Record<string, unknown> => {
  */
 const extractSubmissionFields = (row: SubmissionRow): ParsedSubmission => {
 	const submissionData = parseSubmissionData(row.data);
-	const nestedName = submissionData.data && typeof submissionData.data === 'object' 
+	const nestedName = submissionData.data && typeof submissionData.data === 'object'
 		? (submissionData.data as Record<string, unknown>)['name']
 		: undefined;
 
@@ -49,7 +48,6 @@ const extractSubmissionFields = (row: SubmissionRow): ParsedSubmission => {
 		id: row.id,
 		submitted_at: row.submitted_at,
 		name: String(nestedName || submissionData.name || 'Unknown'),
-		sector: String(submissionData.sector || 'Unknown'),
 		title: String(submissionData.title || submissionData.form || 'Unknown'),
 		date: String(submissionData.date || row.submitted_at),
 		status: String(submissionData.status || 'pending'),
@@ -129,8 +127,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		});
 	} catch (error) {
 		return json(
-			{ 
-				success: false, 
+			{
+				success: false,
 				error: 'Failed to fetch submissions',
 				message: error instanceof Error ? error.message : 'Unknown error'
 			},
@@ -169,8 +167,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		const { isValid, errors } = validateSubmissionData(submission);
 		if (!isValid) {
 			return json(
-				{ 
-					success: false, 
+				{
+					success: false,
 					error: 'Validation failed',
 					details: errors
 				},
@@ -183,7 +181,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Serialize to JSON
 		const data = JSON.stringify(submission);
-		
+
 		// Use parameterized query to prevent SQL injection
 		const result = await db.run(
 			`INSERT INTO ${TABLE_NAME} (data) VALUES (?)`,
@@ -193,8 +191,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ success: true, id: result.lastID }, { status: 201 });
 	} catch (error) {
 		return json(
-			{ 
-				success: false, 
+			{
+				success: false,
 				error: 'Failed to save submission',
 				message: error instanceof Error ? error.message : 'Unknown error'
 			},
@@ -248,8 +246,8 @@ export const DELETE: RequestHandler = async ({ url }) => {
 		return json({ success: true, message: 'Submission deleted' });
 	} catch (error) {
 		return json(
-			{ 
-				success: false, 
+			{
+				success: false,
 				error: 'Failed to delete submission',
 				message: error instanceof Error ? error.message : 'Unknown error'
 			},

@@ -34,7 +34,6 @@
 
   const tableHeaders = [
     { column: 'name', label: 'Nome', class: 'name-header' },
-    { column: 'sector', label: 'Setor' },
     { column: 'title', label: 'Formulário' },
     { column: 'date', label: 'Data de Envio', class: 'date-header' },
     { column: 'status', label: 'Status' },

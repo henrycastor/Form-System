@@ -97,7 +97,6 @@ describe('extractSubmissionFields', () => {
             id: row.id,
             submitted_at: row.submitted_at,
             name: String(nestedName || submissionData.name || 'Unknown'),
-            sector: String(submissionData.sector || 'Unknown'),
             title: String(submissionData.title || submissionData.form || 'Unknown'),
             date: String(submissionData.date || row.submitted_at),
             status: String(submissionData.status || 'pending'),
@@ -109,7 +108,7 @@ describe('extractSubmissionFields', () => {
     it('should extract basic fields from submission', () => {
         const row: SubmissionRow = {
             id: 1,
-            data: '{"name": "Company A", "sector": "Tech", "title": "Form 1"}',
+            data: '{"name": "Company A", "title": "Form 1"}',
             submitted_at: '2024-01-15 10:30:00'
         };
 
@@ -117,7 +116,6 @@ describe('extractSubmissionFields', () => {
 
         expect(result.id).toBe(1);
         expect(result.name).toBe('Company A');
-        expect(result.sector).toBe('Tech');
         expect(result.title).toBe('Form 1');
         expect(result.status).toBe('pending');
     });
@@ -132,7 +130,6 @@ describe('extractSubmissionFields', () => {
         const result = extractSubmissionFields(row);
 
         expect(result.name).toBe('Unknown');
-        expect(result.sector).toBe('Unknown');
         expect(result.title).toBe('Unknown');
     });
 

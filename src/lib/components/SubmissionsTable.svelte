@@ -19,6 +19,17 @@
     headers?: TableHeader[];
   } = $props();
 
+  let searchPlaceholder = $derived(
+    headers
+      .filter((h) => h.column !== 'date' && h.column !== 'status')
+      .map((h) => h.label.toLowerCase())
+      .join(' ou ')
+  );
+
+  let filteredPlaceholder = $derived(
+    searchPlaceholder ? `Buscar por ${searchPlaceholder}` : 'Buscar'
+  );
+
   let sortColumn = $state('date');
   let sortDirection = $state<'asc' | 'desc'>('desc');
   let currentPage = $state(1);
@@ -37,14 +48,9 @@
     const query = searchQuery.toLowerCase();
     const filtered = submissions.filter((s: Submission) => {
       const name = s.name || '';
-      const sector = s.sector || '';
       const form = s.title || '';
 
-      return (
-        name.toLowerCase().includes(query) ||
-        sector.toLowerCase().includes(query) ||
-        form.toLowerCase().includes(query)
-      );
+      return name.toLowerCase().includes(query) || form.toLowerCase().includes(query);
     });
 
     return filtered.sort((a: Submission, b: Submission) => {
@@ -69,7 +75,7 @@
       <h3 class="table-title">Formulários Preenchidos</h3>
     </div>
 
-    <SearchBar bind:searchQuery />
+    <SearchBar bind:searchQuery placeholder={filteredPlaceholder} />
   </div>
 
   <table class="table table-hover">

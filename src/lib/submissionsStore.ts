@@ -4,7 +4,6 @@
 export interface Submission {
 	id: number;
 	name: string;
-	sector: string;
 	title: string;
 	date: string;
 	status: 'pending' | 'completed';

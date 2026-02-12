@@ -2,18 +2,16 @@
   import { Search } from 'lucide-svelte';
   let {
     searchQuery = $bindable(''),
+    placeholder = 'Buscar por nome ou formulário...',
   }: {
     searchQuery?: string;
+    placeholder?: string;
   } = $props();
 </script>
 
 <div class="search-box">
   <Search size={18} class="search-icon" />
-  <input
-    type="text"
-    placeholder="Buscar por nome, setor ou formulário..."
-    bind:value={searchQuery}
-  />
+  <input type="text" {placeholder} bind:value={searchQuery} />
 </div>
 
 <style>

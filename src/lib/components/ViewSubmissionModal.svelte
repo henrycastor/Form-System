@@ -26,7 +26,6 @@
     <div id="printable-content">
       <div class="form-details">
         <FormDetailItem label="Nome Completo" value={item?.name} />
-        <FormDetailItem label="Setor/Área" value={item?.sector} />
         <FormDetailItem label="Formulário" value={item?.title} />
         <FormDetailItem label="Data de Envio" value={formatDate(item?.date)} />
         <FormDetailItem

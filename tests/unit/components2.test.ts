@@ -265,11 +265,11 @@ describe('StatCard Helper Functions', () => {
 describe('SearchBar Helper Functions', () => {
     describe('Placeholder Text', () => {
         const getPlaceholder = (): string => {
-            return 'Buscar por nome, setor ou formulário...';
+            return 'Buscar por nome ou formulário...';
         };
 
         it('should return correct placeholder', () => {
-            expect(getPlaceholder()).toBe('Buscar por nome, setor ou formulário...');
+            expect(getPlaceholder()).toBe('Buscar por nome ou formulário...');
         });
     });
 

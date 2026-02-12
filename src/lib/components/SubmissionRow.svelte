@@ -24,7 +24,6 @@
 
 <tr>
   <td>{item.name || 'N/A'}</td>
-  <td>{item.sector || 'N/A'}</td>
   <td>
     <span class="form-badge form1">{item.title || 'N/A'}</span>
   </td>
