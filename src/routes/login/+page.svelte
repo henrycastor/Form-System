@@ -13,6 +13,10 @@
   );
 </script>
 
+<svelte:head>
+  <title>Login - Administrador</title>
+</svelte:head>
+
 <div class="login-wrapper">
   <div class="login-card">
     <div class="login-header">

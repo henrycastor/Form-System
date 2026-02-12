@@ -11,7 +11,7 @@ test.describe('Login Page', () => {
         await page.goto('http://localhost:5173/login');
 
         // Check for form elements
-        await expect(page.locator('input[type="text"], input[type="email"]').first()).toBeVisible();
+        // Check for form elements - the login only has password (Chave de Acesso)
         await expect(page.locator('input[type="password"]').first()).toBeVisible();
         await expect(page.locator('button[type="submit"]').first()).toBeVisible();
     });

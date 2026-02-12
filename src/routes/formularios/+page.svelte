@@ -7,6 +7,10 @@
   import { forms } from '$lib/form/forms';
 </script>
 
+<svelte:head>
+  <title>Formulários - Project</title>
+</svelte:head>
+
 <Header activePage="forms" />
 
 <main class="main-content">

@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   timeout: 30 * 1000,
+  fullyParallel: false,
+  workers: 1,
   testDir: './tests/e2e',
   use: {
     headless: true,

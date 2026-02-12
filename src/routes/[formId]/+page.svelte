@@ -52,6 +52,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>{formId ? `Formulário ${formId.toUpperCase()}` : 'Formulário'} - Project</title>
+</svelte:head>
+
 {#if formId}
   {#await loadFormData(formId) then result}
     <FormPage formData={result.formData} subtitles={result.subtitles} activePage="forms" />

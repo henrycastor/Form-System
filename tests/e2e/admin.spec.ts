@@ -37,6 +37,46 @@ test.describe('Admin Panel E2E', () => {
         await expect(page.locator('.empty-state')).toContainText('Nenhum formulário encontrado');
     });
 
+    test('should delete a submission', async ({ page, request }) => {
+        const uniqueName = `Delete Me ${Date.now()}`;
+        // Create a test submission first
+        const newSubmission = await request.post('http://localhost:5173/api/submissions', {
+            data: {
+                title: 'E2E Deletion Test',
+                companyName: 'DeleteMe Corp',
+                email: 'delete@me.com',
+                name: uniqueName,
+                status: 'pending'
+            }
+        });
+        expect(newSubmission.ok()).toBe(true);
+
+        await page.goto('http://localhost:5173/painel_administracao');
+
+        // Wait for the table to load and find our specific row
+        const rowSelector = `tr:has-text("${uniqueName}")`;
+        await page.waitForSelector(rowSelector);
+
+        const row = page.locator(rowSelector).first();
+        await expect(row).toBeVisible();
+
+        // Click delete on our specific row
+        await row.locator('button.delete').click();
+
+        // Modal should appear
+        const modal = page.locator('.modal-content');
+        await expect(modal).toBeVisible();
+
+        // Click confirm delete
+        await modal.locator('button.btn-danger:has-text("Excluir Permanentemente")').click();
+
+        // Toast should appear
+        await expect(page.locator('text=/sucesso|excluído/i')).toBeVisible();
+
+        // Row should be removed
+        await expect(row).not.toBeVisible({ timeout: 10000 });
+    });
+
     test('should have working logout', async ({ page }) => {
         await page.goto('http://localhost:5173/painel_administracao');
 

@@ -40,7 +40,7 @@
   </h3>
 
   {#each questions as q}
-    <div class="question-container mb-4">
+    <div class="question-container mb-4" data-testid="question-{q.id}">
       {#if showIds}
         <div class="question-title">{q.id}. {q.text || ''}</div>
       {:else}

@@ -8,7 +8,8 @@ test.describe('Form Navigation', () => {
         await expect(page).toHaveTitle(/Form/);
 
         // Check that forms section is visible
-        await expect(page.locator('text=Formulários')).toBeVisible();
+        // Check that forms section is visible - using a more specific selector
+        await expect(page.locator('h3:has-text("Formulários")').or(page.locator('a:has-text("Formulários")')).first()).toBeVisible();
     });
 
     test('should navigate to formularios page', async ({ page }) => {
@@ -63,7 +64,46 @@ test.describe('Form Questions', () => {
         await page.goto('http://localhost:5173/form1');
 
         // Check for content about diversity
-        await expect(page.locator('text=Diversidade')).toBeVisible();
+        // Check for content about diversity
+        await expect(page.locator('text=diversidade').first()).toBeVisible();
+    });
+});
+
+test.describe('Full Form Submission', () => {
+    test('should fill and submit form1 successfully', async ({ page }) => {
+        // Go to form1
+        await page.goto('http://localhost:5173/form1');
+
+        // Fill Intro Section
+        await page.fill('textarea[name="companyName"]', 'Test Company E2E');
+        await page.fill('textarea[name="email"]', 'e2e@test.com');
+        await page.fill('textarea[name="name"]', 'E2E Tester');
+
+        // Select LGPD option (it's a choice)
+        await page.click('label:has-text("Sim, autorizo")');
+
+        // Answer some questions specifically
+        await page.click('label[for="1-true"]');
+        await page.fill('textarea[id="1-cmt"]', 'This is an E2E test comment');
+
+        // Loop through the rest of the questions and click "Sim" (true)
+        // form1 has questions 1 to 55
+        for (let i = 2; i <= 55; i++) {
+            await page.click(`label[for="${i}-true"]`);
+        }
+
+        // The submit button should now be enabled
+        const submitButton = page.locator('button[type="submit"]');
+        await expect(submitButton).toBeEnabled();
+
+        // Click submit
+        await submitButton.click();
+
+        // Check for success message in toast
+        await expect(page.locator('text=enviado com sucesso')).toBeVisible();
+
+        // Should eventually redirect back to /formularios
+        await expect(page).toHaveURL(/formularios/, { timeout: 10000 });
     });
 });
 

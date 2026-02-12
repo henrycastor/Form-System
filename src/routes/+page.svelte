@@ -5,6 +5,10 @@
   import { BarChart3, FileText } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+  <title>Project - Default</title>
+</svelte:head>
+
 <Header activePage="home" />
 
 <main class="main-content">
