@@ -171,8 +171,24 @@ def get_submissions():
         
         logger.info(f"Retrieved {len(result)} submissions (page {page}, per_page {per_page})")
         
+        # Transform submissions to include fields at top level
+        transformed_submissions = []
+        for submission in result:
+            data = submission.get('data', {})
+            transformed_submission = {
+                'id': submission.get('id'),
+                'name': data.get('name') or data.get('companyName') or 'N/A',
+                'title': data.get('title') or data.get('form') or 'N/A',
+                'date': data.get('date') or submission.get('submitted_at'),
+                'status': data.get('status') or 'pending',
+                'data': data,
+                'submitted_at': submission.get('submitted_at')
+            }
+            transformed_submissions.append(transformed_submission)
+
         return jsonify({
-            'submissions': result,
+            'success': True,
+            'submissions': transformed_submissions,
             'pagination': {
                 'page': page,
                 'per_page': per_page,
@@ -182,7 +198,7 @@ def get_submissions():
         })
     except Exception as e:
         logger.error(f"Unexpected error in get_submissions: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
 @app.route('/api/submissions/<int:submission_id>', methods=['GET'])
@@ -193,13 +209,13 @@ def get_submission(submission_id):
         
         if submission:
             logger.info(f"Retrieved submission {submission_id}")
-            return jsonify(submission.to_dict())
+            return jsonify({'success': True, 'data': submission.to_dict()})
         
         logger.warning(f"Submission {submission_id} not found")
-        return jsonify({'error': 'Submission not found'}), 404
+        return jsonify({'success': False, 'error': 'Submission not found'}), 404
     except Exception as e:
         logger.error(f"Unexpected error in get_submission: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
 @app.route('/api/submissions', methods=['POST'])
@@ -211,17 +227,17 @@ def create_submission():
             data = request.get_json(force=True)
         except Exception as e:
             logger.warning(f"Invalid JSON in request body: {e}")
-            return jsonify({'error': 'Invalid JSON'}), 400
+            return jsonify({'success': False, 'error': 'Invalid JSON'}), 400
         
         if not data:
             logger.warning("Empty submission data")
-            return jsonify({'error': 'Missing submission data'}), 400
+            return jsonify({'success': False, 'error': 'Missing submission data'}), 400
         
         # Validate submission data
         is_valid, errors = validate_submission_data(data)
         if not is_valid:
             logger.warning(f"Invalid submission data: {errors}")
-            return jsonify({'error': 'Validation failed', 'details': errors}), 400
+            return jsonify({'success': False, 'error': 'Validation failed', 'details': errors}), 400
         
         try:
             # SQLAlchemy handles JSON serialization automatically if we pass the dict to the JSON column
@@ -231,16 +247,17 @@ def create_submission():
             
             logger.info(f"Submission {submission.id} created successfully")
             return jsonify({
+                'success': True,
                 'id': submission.id,
                 'message': 'Submission created successfully'
             }), 201
         except Exception as e:
             logger.error(f"Database error creating submission: {e}")
             db.session.rollback()
-            return jsonify({'error': 'Failed to save submission'}), 500
+            return jsonify({'success': False, 'error': 'Failed to save submission'}), 500
     except Exception as e:
         logger.error(f"Unexpected error in create_submission: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
 @app.route('/api/submissions/<int:submission_id>', methods=['DELETE'])
@@ -254,17 +271,17 @@ def delete_submission(submission_id):
                 db.session.delete(submission)
                 db.session.commit()
                 logger.info(f"Submission {submission_id} deleted successfully")
-                return jsonify({'message': 'Submission deleted successfully'})
+                return jsonify({'success': True, 'message': 'Submission deleted successfully'})
             
             logger.warning(f"Attempted to delete non-existent submission {submission_id}")
-            return jsonify({'error': 'Submission not found'}), 404
+            return jsonify({'success': False, 'error': 'Submission not found'}), 404
         except Exception as e:
             logger.error(f"Database error deleting submission {submission_id}: {e}")
             db.session.rollback()
-            return jsonify({'error': 'Failed to delete submission'}), 500
+            return jsonify({'success': False, 'error': 'Failed to delete submission'}), 500
     except Exception as e:
         logger.error(f"Unexpected error in delete_submission: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
 @app.route('/api/stats', methods=['GET'])
@@ -284,15 +301,16 @@ def get_stats():
             logger.info(f"Stats retrieved: total={total}, recent={recent}")
             
             return jsonify({
+                'success': True,
                 'total': total,
                 'recent': recent
             })
         except Exception as e:
             logger.error(f"Database error fetching stats: {e}")
-            return jsonify({'error': 'Database error'}), 500
+            return jsonify({'success': False, 'error': 'Database error'}), 500
     except Exception as e:
         logger.error(f"Unexpected error in get_stats: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
 @app.errorhandler(404)

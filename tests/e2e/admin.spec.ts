@@ -40,7 +40,7 @@ test.describe('Admin Panel E2E', () => {
     test('should delete a submission', async ({ page, request }) => {
         const uniqueName = `Delete Me ${Date.now()}`;
         // Create a test submission first
-        const newSubmission = await request.post('http://localhost:5173/api/submissions', {
+        const newSubmission = await request.post('http://localhost:5000/api/submissions', {
             data: {
                 title: 'E2E Deletion Test',
                 companyName: 'DeleteMe Corp',
@@ -50,12 +50,14 @@ test.describe('Admin Panel E2E', () => {
             }
         });
         expect(newSubmission.ok()).toBe(true);
+        const submissionData = await newSubmission.json();
+        const submissionId = submissionData.id;
 
-        await page.goto('http://localhost:5173/painel_administracao');
+        await page.goto('http://localhost:5000/painel_administracao');
 
         // Wait for the table to load and find our specific row
         const rowSelector = `tr:has-text("${uniqueName}")`;
-        await page.waitForSelector(rowSelector);
+        await page.waitForSelector(rowSelector, { timeout: 10000 });
 
         const row = page.locator(rowSelector).first();
         await expect(row).toBeVisible();

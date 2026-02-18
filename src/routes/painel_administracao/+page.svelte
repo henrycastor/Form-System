@@ -87,7 +87,7 @@
     }
 
     try {
-      const response = await fetch(`/api/submissions?id=${deleteModal.item.id}`, {
+      const response = await fetch(`/api/submissions/${deleteModal.item.id}`, {
         method: 'DELETE',
       });
 

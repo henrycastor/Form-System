@@ -77,7 +77,7 @@ export async function submitForm(data: SubmissionData): Promise<SubmissionRespon
  */
 export async function deleteSubmission(id: number): Promise<SubmissionResponse> {
 	return handleApiCall(
-		() => fetch(`/api/submissions?id=${id}`, {
+		() => fetch(`/api/submissions/${id}`, {
 			method: "DELETE",
 			headers: { "Accept": "application/json" },
 		}),
