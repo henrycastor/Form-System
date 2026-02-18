@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Integration tests for the Flask API
+Integration tests for the Flask API using SQLAlchemy
 """
 import pytest
 import os
@@ -18,8 +18,10 @@ os.close(fd)
 os.environ['DATABASE_PATH'] = temp_db_path
 os.environ['FLASK_DEBUG'] = 'False'
 
-# Now import the app
-from flask_app import app, get_db_pool
+# Now import the app and db
+from flask_app import app
+from extensions import db
+from models import Submission
 
 class TestAPI:
     """Tests for Flask API endpoints."""
@@ -28,20 +30,15 @@ class TestAPI:
     def client(self):
         """Configure the app for testing and return a test client."""
         app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{temp_db_path}"
+        
         with app.test_client() as client:
+            with app.app_context():
+                db.create_all()
             yield client
-
-    @pytest.fixture(autouse=True)
-    def clean_db(self):
-        """Clean the database before each test."""
-        pool = get_db_pool()
-        conn = pool.get_connection()
-        try:
-            conn.execute('DELETE FROM diagnostico_submissions')
-            conn.commit()
-        finally:
-            pool.return_connection(conn)
-        yield
+            with app.app_context():
+                db.session.remove()
+                db.drop_all()
 
     def test_index_route(self, client):
         """Test the home page."""

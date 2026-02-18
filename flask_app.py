@@ -5,21 +5,30 @@ Designed for deployment on PythonAnywhere
 """
 
 import os
-import json
-import sqlite3
+# import json  <-- keeping it just in case, but let's check deeper usage.
+# actually, create_submission used request.get_json() which is flask method.
+# models.py uses json.
+# let's modify imports cleanly.
+
+import os
+import json # Keeping json if needed for error handling or other things, but looks unused now.
+from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, send_from_directory, jsonify, request, render_template_string
 from werkzeug.exceptions import NotFound
 
 from logger import setup_logger
-from db_pool import init_db_pool, get_db_pool
+from logger import setup_logger
+from extensions import db
+from models import Submission
 from validators import (
     validate_submission_data,
     validate_page_number,
     validate_per_page,
     validate_search_query,
 )
+from sqlalchemy import or_, func, cast, String
 
 # Load environment variables
 load_dotenv()
@@ -33,10 +42,13 @@ app = Flask(__name__, static_folder='build')
 BASE_DIR = Path(__file__).parent
 BUILD_DIR = BASE_DIR / os.getenv('BUILD_DIR', 'build')
 DB_PATH = BASE_DIR / os.getenv('DATABASE_PATH', 'respostas.db')
-DB_POOL_SIZE = int(os.getenv('DATABASE_POOL_SIZE', '5'))
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-dev-key')
 
 app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
 
 # Ensure build directory exists
 if not BUILD_DIR.exists():
@@ -45,34 +57,24 @@ if not BUILD_DIR.exists():
 
 
 def init_db():
-    """Initialize the database if it doesn't exist."""
+    """Initialize the database tables."""
     try:
-        pool = get_db_pool()
-        conn = pool.get_connection()
-        try:
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS diagnostico_submissions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    data TEXT NOT NULL,
-                    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            conn.commit()
+        with app.app_context():
+            db.create_all()
             logger.info("Database initialized successfully")
-        finally:
-            pool.return_connection(conn)
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         raise
 
 
-# Initialize database pool and database on startup
+# Initialize database on startup
 try:
-    init_db_pool(str(DB_PATH), DB_POOL_SIZE)
     init_db()
     logger.info("Application startup complete")
 except Exception as e:
     logger.error(f"Fatal error during initialization: {e}")
+    # We might not want to crash completely if DB init fails, 
+    # but for critical components, raising is appropriate.
     raise
 
 
@@ -143,63 +145,41 @@ def get_submissions():
     """Get all submissions with optional filtering and pagination."""
     try:
         # Validate and sanitize input parameters
-        page = validate_page_number(request.args.get('page', 1))
-        per_page = validate_per_page(request.args.get('per_page', 10))
+        page = validate_page_number(request.args.get('page', 1, type=int))
+        per_page = validate_per_page(request.args.get('per_page', 10, type=int))
         search = validate_search_query(request.args.get('search', ''))
         
-        pool = get_db_pool()
-        conn = pool.get_connection()
+        query = Submission.query
+
+        if search:
+            # Using cast to string because data is JSON type now
+            # SQLite supports JSON searching differently, but simple LIKE works on text representation usually.
+            query = query.filter(cast(Submission.data, String).like(f'%{search}%'))
         
-        try:
-            # Build query with parameterized statements to prevent SQL injection
-            query = 'SELECT * FROM diagnostico_submissions WHERE 1=1'
-            params = []
-            
-            if search:
-                query += ' AND data LIKE ?'
-                params.append(f'%{search}%')
-            
-            # Get total count
-            count_query = query.replace('SELECT *', 'SELECT COUNT(*)')
-            total = conn.execute(count_query, params).fetchone()[0]
-            
-            # Get paginated results
-            query += ' ORDER BY submitted_at DESC LIMIT ? OFFSET ?'
-            params.extend([per_page, (page - 1) * per_page])
-            
-            submissions = conn.execute(query, params).fetchall()
-            
-            # Convert to list of dicts
-            result = []
-            for sub in submissions:
-                try:
-                    submission_data = json.loads(sub['data'])
-                    result.append({
-                        'id': sub['id'],
-                        'data': submission_data,
-                        'submitted_at': sub['submitted_at']
-                    })
-                except json.JSONDecodeError as e:
-                    logger.warning(f"Failed to parse submission {sub['id']}: {e}")
-                    # Skip invalid JSON records
-                    continue
-            
-            logger.info(f"Retrieved {len(result)} submissions (page {page}, per_page {per_page})")
-            
-            return jsonify({
-                'submissions': result,
-                'pagination': {
-                    'page': page,
-                    'per_page': per_page,
-                    'total': total,
-                    'pages': (total + per_page - 1) // per_page
-                }
-            })
-        except sqlite3.Error as e:
-            logger.error(f"Database error while fetching submissions: {e}")
-            return jsonify({'error': 'Database error'}), 500
-        finally:
-            pool.return_connection(conn)
+        # Get total count
+        total = query.count()
+        
+        # Get paginated results
+        pagination = query.order_by(Submission.submitted_at.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+        
+        submissions = pagination.items
+        
+        # Convert to list of dicts
+        result = [sub.to_dict() for sub in submissions]
+        
+        logger.info(f"Retrieved {len(result)} submissions (page {page}, per_page {per_page})")
+        
+        return jsonify({
+            'submissions': result,
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': total,
+                'pages': pagination.pages
+            }
+        })
     except Exception as e:
         logger.error(f"Unexpected error in get_submissions: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -209,36 +189,14 @@ def get_submissions():
 def get_submission(submission_id):
     """Get a specific submission by ID."""
     try:
-        pool = get_db_pool()
-        conn = pool.get_connection()
+        submission = Submission.query.get(submission_id)
         
-        try:
-            # Use parameterized query to prevent SQL injection
-            submission = conn.execute(
-                'SELECT * FROM diagnostico_submissions WHERE id = ?',
-                (submission_id,)
-            ).fetchone()
-            
-            if submission:
-                try:
-                    submission_data = json.loads(submission['data'])
-                    logger.info(f"Retrieved submission {submission_id}")
-                    return jsonify({
-                        'id': submission['id'],
-                        'data': submission_data,
-                        'submitted_at': submission['submitted_at']
-                    })
-                except json.JSONDecodeError as e:
-                    logger.error(f"Failed to parse submission {submission_id}: {e}")
-                    return jsonify({'error': 'Invalid submission data'}), 500
-            
-            logger.warning(f"Submission {submission_id} not found")
-            return jsonify({'error': 'Submission not found'}), 404
-        except sqlite3.Error as e:
-            logger.error(f"Database error fetching submission {submission_id}: {e}")
-            return jsonify({'error': 'Database error'}), 500
-        finally:
-            pool.return_connection(conn)
+        if submission:
+            logger.info(f"Retrieved submission {submission_id}")
+            return jsonify(submission.to_dict())
+        
+        logger.warning(f"Submission {submission_id} not found")
+        return jsonify({'error': 'Submission not found'}), 404
     except Exception as e:
         logger.error(f"Unexpected error in get_submission: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -265,36 +223,21 @@ def create_submission():
             logger.warning(f"Invalid submission data: {errors}")
             return jsonify({'error': 'Validation failed', 'details': errors}), 400
         
-        # Serialize to JSON
         try:
-            submission_json = json.dumps(data)
-        except (TypeError, ValueError) as e:
-            logger.error(f"Failed to serialize submission data: {e}")
-            return jsonify({'error': 'Data serialization failed'}), 400
-        
-        pool = get_db_pool()
-        conn = pool.get_connection()
-        
-        try:
-            # Use parameterized query to prevent SQL injection
-            cursor = conn.execute(
-                'INSERT INTO diagnostico_submissions (data) VALUES (?)',
-                (submission_json,)
-            )
-            conn.commit()
-            submission_id = cursor.lastrowid
+            # SQLAlchemy handles JSON serialization automatically if we pass the dict to the JSON column
+            submission = Submission(data=data)
+            db.session.add(submission)
+            db.session.commit()
             
-            logger.info(f"Submission {submission_id} created successfully")
+            logger.info(f"Submission {submission.id} created successfully")
             return jsonify({
-                'id': submission_id,
+                'id': submission.id,
                 'message': 'Submission created successfully'
             }), 201
-        except sqlite3.Error as e:
+        except Exception as e:
             logger.error(f"Database error creating submission: {e}")
-            conn.rollback()
+            db.session.rollback()
             return jsonify({'error': 'Failed to save submission'}), 500
-        finally:
-            pool.return_connection(conn)
     except Exception as e:
         logger.error(f"Unexpected error in create_submission: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -304,29 +247,21 @@ def create_submission():
 def delete_submission(submission_id):
     """Delete a submission by ID."""
     try:
-        pool = get_db_pool()
-        conn = pool.get_connection()
-        
         try:
-            # Use parameterized query to prevent SQL injection
-            cursor = conn.execute(
-                'DELETE FROM diagnostico_submissions WHERE id = ?',
-                (submission_id,)
-            )
-            conn.commit()
+            submission = Submission.query.get(submission_id)
             
-            if cursor.rowcount > 0:
+            if submission:
+                db.session.delete(submission)
+                db.session.commit()
                 logger.info(f"Submission {submission_id} deleted successfully")
                 return jsonify({'message': 'Submission deleted successfully'})
             
             logger.warning(f"Attempted to delete non-existent submission {submission_id}")
             return jsonify({'error': 'Submission not found'}), 404
-        except sqlite3.Error as e:
+        except Exception as e:
             logger.error(f"Database error deleting submission {submission_id}: {e}")
-            conn.rollback()
+            db.session.rollback()
             return jsonify({'error': 'Failed to delete submission'}), 500
-        finally:
-            pool.return_connection(conn)
     except Exception as e:
         logger.error(f"Unexpected error in delete_submission: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -336,18 +271,15 @@ def delete_submission(submission_id):
 def get_stats():
     """Get submission statistics."""
     try:
-        pool = get_db_pool()
-        conn = pool.get_connection()
-        
         try:
             # Total submissions
-            total = conn.execute('SELECT COUNT(*) FROM diagnostico_submissions').fetchone()[0]
+            total = Submission.query.count()
             
             # Recent submissions (last 7 days)
-            recent = conn.execute('''
-                SELECT COUNT(*) FROM diagnostico_submissions
-                WHERE submitted_at >= datetime('now', '-7 days')
-            ''').fetchone()[0]
+            # Using SQLite specific modification for datetime if needed, or SQLAlchemy func
+            # Since we defaulted submitted_at to utcnow, we can filter naturally
+            seven_days_ago = datetime.utcnow() - timedelta(days=7)
+            recent = Submission.query.filter(Submission.submitted_at >= seven_days_ago).count()
             
             logger.info(f"Stats retrieved: total={total}, recent={recent}")
             
@@ -355,11 +287,9 @@ def get_stats():
                 'total': total,
                 'recent': recent
             })
-        except sqlite3.Error as e:
+        except Exception as e:
             logger.error(f"Database error fetching stats: {e}")
             return jsonify({'error': 'Database error'}), 500
-        finally:
-            pool.return_connection(conn)
     except Exception as e:
         logger.error(f"Unexpected error in get_stats: {e}")
         return jsonify({'error': 'Internal server error'}), 500
