@@ -41,11 +41,10 @@ class TestAPI:
                 db.drop_all()
 
     def test_index_route(self, client):
-        """Test the home page."""
+        """Test the home page redirect."""
         response = client.get('/')
-        assert response.status_code == 200
-        # Check if it returns the "Not Built" page or index content
-        assert b"SvelteKit Application" in response.data
+        assert response.status_code == 302
+        assert 'http://localhost:5175' in response.headers['Location']
 
     def test_create_submission(self, client):
         """Test creating a new submission."""
@@ -92,8 +91,9 @@ class TestAPI:
         response = client.get(f'/api/submissions/{sub_id}')
         assert response.status_code == 200
         res_data = json.loads(response.data)
-        assert res_data["id"] == sub_id
-        assert res_data["data"]["companyName"] == "Specific"
+        assert res_data["success"] == True
+        assert res_data["data"]["id"] == sub_id
+        assert res_data["data"]["data"]["companyName"] == "Specific"
 
     def test_delete_submission(self, client):
         """Test deleting a submission."""
