@@ -131,7 +131,6 @@
       }
     } catch (error) {
       delayed = false;
-      console.error('Error submitting form:', error);
       toast.error(
         'Ocorreu um erro ao enviar o formulário. Tente novamente.\n\nDetalhes: ' +
           (error as Error).message

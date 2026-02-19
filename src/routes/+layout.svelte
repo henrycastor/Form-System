@@ -38,7 +38,7 @@
         // Clear after restoring to avoid duplicates
         sessionStorage.removeItem('toasts');
       } catch (e) {
-        console.error('Failed to parse saved toasts:', e);
+        // Error handled silently - invalid toasts will not be restored
       }
     }
   }

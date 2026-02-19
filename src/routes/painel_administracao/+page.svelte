@@ -80,27 +80,35 @@
   ];
 
   async function deleteSubmission() {
+    console.log('deleteSubmission() called');
     if (!deleteModal.item || !deleteModal.item.id) {
-      console.error('No valid item selected for deletion.');
       toast.error('Nenhum formulário selecionado para exclusão.');
       return;
     }
 
     try {
+      console.log('Attempting to delete submission with ID:', deleteModal.item.id);
       const response = await fetch(`/api/submissions/${deleteModal.item.id}`, {
         method: 'DELETE',
       });
 
+      console.log('Delete response status:', response.status);
+      const responseData = await response.json();
+      console.log('Delete response data:', responseData);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Unknown error');
+        throw new Error(responseData.error || 'Unknown error');
       }
 
-      submissions.update((items) => items.filter((i) => i.id !== deleteModal.item!.id));
+      console.log('Deleting from local store. Current items:', $submissions);
+      submissions.update((items) => {
+        const newItems = items.filter((i) => i.id !== deleteModal.item!.id);
+        console.log('New items after deletion:', newItems);
+        return newItems;
+      });
       deleteModal.close();
       toast.success('Formulário excluído com sucesso!');
     } catch (e) {
-      console.error('Delete error:', e);
       toast.error(`Erro ao excluir o formulário: ${(e as Error).message}`);
     }
   }

@@ -70,5 +70,5 @@ export async function initDb(): Promise<void> {
 // Initialize the database when the application starts
 // Using try-catch to prevent startup failures from crashing the app
 initDb().catch((err) => {
-	console.error('Error initializing database:', err);
+	// Error handled silently to prevent app crash on startup
 });
