@@ -92,7 +92,7 @@ describe('Submission Service', () => {
             const result = await deleteSubmission(5);
 
             expect(result).toEqual(mockResponse);
-            expect(mockFetch).toHaveBeenCalledWith('/api/submissions?id=5', {
+            expect(mockFetch).toHaveBeenCalledWith('/api/submissions/5', {
                 method: 'DELETE',
                 headers: { 'Accept': 'application/json' }
             });

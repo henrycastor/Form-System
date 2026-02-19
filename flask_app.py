@@ -129,10 +129,13 @@ def index():
 @app.route('/<path:path>')
 def serve_static(path):
     """Serve static files from the build directory."""
+    # Do not serve index.html for __data.json
+    if path == '__data.json':
+        return jsonify({'error': 'Not found'}), 404
     try:
         return send_from_directory(BUILD_DIR, path)
     except NotFound:
-        # If file not found, serve index.html for SPA routing
+        # If file not found, serve index.html for SPA routing (except __data.json)
         index_path = BUILD_DIR / 'index.html'
         if index_path.exists():
             return send_from_directory(BUILD_DIR, 'index.html')
@@ -260,10 +263,19 @@ def create_submission():
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 
+@app.route('/api/submissions', methods=['DELETE'])
 @app.route('/api/submissions/<int:submission_id>', methods=['DELETE'])
-def delete_submission(submission_id):
-    """Delete a submission by ID."""
+def delete_submission(submission_id=None):
+    """Delete a submission by ID (supports both URL formats: /api/submissions/<id> and /api/submissions?id=<id>)"""
     try:
+        # Get submission ID from either URL parameter or query parameter
+        if not submission_id:
+            submission_id = request.args.get('id', type=int)
+        
+        if not submission_id:
+            logger.warning("Attempted to delete submission without providing an ID")
+            return jsonify({'success': False, 'error': 'Missing submission ID'}), 400
+            
         try:
             submission = Submission.query.get(submission_id)
             
@@ -317,8 +329,8 @@ def get_stats():
 def not_found(error):
     """Handle 404 errors."""
     logger.warning(f"404 error: {request.path}")
-    # For SPA, return index.html for non-API routes
-    if not request.path.startswith('/api/'):
+    # For SPA, return index.html for non-API routes, but not for __data.json which should 404
+    if not request.path.startswith('/api/') and not request.path == '/__data.json':
         index_path = BUILD_DIR / 'index.html'
         if index_path.exists():
             return send_from_directory(BUILD_DIR, 'index.html')

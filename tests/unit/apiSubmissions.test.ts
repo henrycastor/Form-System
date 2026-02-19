@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GET, POST, DELETE } from '$lib/../routes/api/submissions/+server';
+import { GET, POST } from '$lib/../routes/api/submissions/+server';
+import { DELETE } from '$lib/../routes/api/submissions/[id]/+server';
 import { getDbConnection } from '$lib/db';
 import { json } from '@sveltejs/kit';
 
