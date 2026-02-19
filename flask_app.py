@@ -5,17 +5,13 @@ Designed for deployment on PythonAnywhere
 """
 
 import os
-# import json  <-- keeping it just in case, but let's check deeper usage.
-# actually, create_submission used request.get_json() which is flask method.
-# models.py uses json.
-# let's modify imports cleanly.
-
-import os
-import json # Keeping json if needed for error handling or other things, but looks unused now.
+import json
+import subprocess
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, send_from_directory, jsonify, request, render_template_string
+from flask import Flask, send_from_directory, jsonify, request, render_template_string, redirect
 from werkzeug.exceptions import NotFound
 
 from logger import setup_logger
@@ -56,6 +52,33 @@ if not BUILD_DIR.exists():
     logger.info(f"Created build directory: {BUILD_DIR}")
 
 
+def start_sveltekit():
+    """Start the SvelteKit frontend server."""
+    try:
+        logger.info("Starting SvelteKit frontend server...")
+        # Check if npm is available
+        npm_check = subprocess.run(
+            [sys.executable, '-m', 'npm', '--version'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if npm_check.returncode != 0:
+            logger.warning("npm not found. SvelteKit server not started.")
+            return None
+        
+        # Start SvelteKit server
+        sveltekit_process = subprocess.Popen(
+            [sys.executable, '-m', 'npm', 'run', 'dev'],
+            shell=(sys.platform == 'win32')
+        )
+        
+        logger.info(f"SvelteKit server started with PID: {sveltekit_process.pid}")
+        return sveltekit_process
+    except Exception as e:
+        logger.error(f"Failed to start SvelteKit server: {e}")
+        return None
+
 def init_db():
     """Initialize the database tables."""
     try:
@@ -71,6 +94,28 @@ def init_db():
 try:
     init_db()
     logger.info("Application startup complete")
+    
+    # Start SvelteKit server (in development mode only)
+    if os.getenv('FLASK_DEBUG', 'False').lower() == 'true':
+        sveltekit_process = start_sveltekit()
+        if sveltekit_process:
+            # Register cleanup function to stop SvelteKit when Flask exits
+            import atexit
+            def cleanup_sveltekit():
+                try:
+                    logger.info("Stopping SvelteKit server...")
+                    sveltekit_process.terminate()
+                    sveltekit_process.wait(timeout=5)
+                    logger.info("SvelteKit server stopped successfully")
+                except Exception as e:
+                    logger.error(f"Error stopping SvelteKit server: {e}")
+                    try:
+                        sveltekit_process.kill()
+                        logger.info("SvelteKit server killed")
+                    except Exception as kill_error:
+                        logger.error(f"Failed to kill SvelteKit server: {kill_error}")
+            
+            atexit.register(cleanup_sveltekit)
 except Exception as e:
     logger.error(f"Fatal error during initialization: {e}")
     # We might not want to crash completely if DB init fails, 
@@ -80,66 +125,27 @@ except Exception as e:
 
 @app.route('/')
 def index():
-    """Serve the main index.html file."""
-    index_path = BUILD_DIR / 'index.html'
-    if index_path.exists():
-        return send_from_directory(BUILD_DIR, 'index.html')
-    return render_template_string('''
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>SvelteKit App - Not Built</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                    margin: 0;
-                    background: #f0f0f0;
-                }
-                .container {
-                    text-align: center;
-                    padding: 40px;
-                    background: white;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                }
-                h1 { color: #333; }
-                p { color: #666; }
-                code {
-                    background: #f4f4f4;
-                    padding: 2px 6px;
-                    border-radius: 3px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>🚀 SvelteKit Application</h1>
-                <p>The application has not been built yet.</p>
-                <p>Run <code>npm run build</code> to build the application.</p>
-            </div>
-        </body>
-        </html>
-    ''')
-
+    """Redirect to SvelteKit dev server."""
+    return redirect('http://localhost:5175')
 
 @app.route('/<path:path>')
-def serve_static(path):
-    """Serve static files from the build directory."""
-    # Do not serve index.html for __data.json
-    if path == '__data.json':
-        return jsonify({'error': 'Not found'}), 404
-    try:
+def redirect_to_sveltekit(path):
+    """Redirect all non-API paths to SvelteKit dev server."""
+    if path.startswith('api/'):
+        # Let API paths be handled by Flask
+        if path == 'api/submissions' or path.startswith('api/submissions/'):
+            abort(404)  # Let the specific API routes handle this
         return send_from_directory(BUILD_DIR, path)
-    except NotFound:
-        # If file not found, serve index.html for SPA routing (except __data.json)
-        index_path = BUILD_DIR / 'index.html'
-        if index_path.exists():
-            return send_from_directory(BUILD_DIR, 'index.html')
-        raise
+    
+    # Redirect all other paths to SvelteKit dev server
+    return redirect(f'http://localhost:5175/{path}')
+
+
+@app.route('/api/<path:path>')
+def api_proxy(path):
+    """Handle API requests."""
+    # This is now redundant since we have specific API routes
+    return jsonify({'error': 'Not found'}), 404
 
 
 # API Routes
