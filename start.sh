@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "Starting Flask backend..."
-venv/bin/python flask_app.py &
+echo "Starting Flask backend with Gunicorn WSGI server..."
+venv/bin/gunicorn wsgi:application --bind 0.0.0.0:5000 --workers 4 &
 FLASK_PID=$!
 
 echo "Starting SvelteKit frontend..."

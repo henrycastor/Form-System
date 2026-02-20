@@ -19,10 +19,10 @@ def main():
         print("Error: Virtual environment 'venv' not found. Please create it first.")
         sys.exit(1)
 
-    # Start Flask backend
-    print("Starting Flask backend...")
+    # Start Flask backend with Gunicorn WSGI server (production-ready)
+    print("Starting Flask backend with Gunicorn WSGI server...")
     flask_process = subprocess.Popen(
-        [str(venv_dir / 'bin' / 'python'), 'flask_app.py'],
+        [str(venv_dir / 'bin' / 'gunicorn'), 'wsgi:application', '--bind', '0.0.0.0:5000', '--workers', '4'],
         cwd=current_dir
     )
 
