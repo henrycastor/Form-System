@@ -28,11 +28,18 @@ def main():
 
     # Start SvelteKit frontend
     print("Starting SvelteKit frontend...")
-    sveltekit_process = subprocess.Popen(
-        [sys.executable, '-m', 'npm', 'run', 'dev'],
-        cwd=current_dir,
-        shell=(sys.platform == 'win32')
-    )
+    # npm is a Node.js package manager, not a Python module, so we run it directly
+    if sys.platform == 'win32':
+        sveltekit_process = subprocess.Popen(
+            ['npm', 'run', 'dev'],
+            cwd=current_dir,
+            shell=True
+        )
+    else:
+        sveltekit_process = subprocess.Popen(
+            ['npm', 'run', 'dev'],
+            cwd=current_dir
+        )
 
     print(f"Servers started. Flask PID: {flask_process.pid}, SvelteKit PID: {sveltekit_process.pid}")
 
