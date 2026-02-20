@@ -17,8 +17,7 @@ export const actions: Actions = {
                 path: '/',
                 httpOnly: true,
                 sameSite: 'strict',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 60 * 60 * 24 // 1 day
+                secure: process.env.NODE_ENV === 'production'
             });
 
             throw redirect(303, '/painel_administracao');

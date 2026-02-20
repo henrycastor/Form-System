@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { beforeNavigate, goto, invalidateAll } from '$app/navigation';
   import { writable } from 'svelte/store';
   import type { Submission } from '$lib/submissionsStore.svelte'; // Import only the type
   import Header from '$lib/components/Header.svelte';

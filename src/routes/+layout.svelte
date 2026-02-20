@@ -7,6 +7,21 @@
   console.log('Layout mounted');
   let { children } = $props();
 
+  import { afterNavigate, invalidateAll } from '$app/navigation';
+  import { page } from '$app/state';
+
+  // Trigger auto-logout refresh on the client side
+  afterNavigate(({ from, to }) => {
+    const wasAdmin = from?.url.pathname.startsWith('/painel_administracao');
+    const isNowAdmin = to?.url.pathname.startsWith('/painel_administracao');
+
+    // If we just left the admin panel, force a data refresh
+    // This triggers the layout load above to run on the server and delete the cookie
+    if (wasAdmin && !isNowAdmin && page.data.isAuthenticated) {
+      invalidateAll();
+    }
+  });
+
   // Preserve toast state across page changes
   onMount(() => {
     const unsubscribe = toasts.subscribe((currentToasts) => {
@@ -18,9 +33,6 @@
 
     return () => unsubscribe();
   });
-
-  import { page } from '$app/state';
-  import { invalidateAll } from '$app/navigation';
 
   // Restore toasts from sessionStorage on initial load
   if (typeof sessionStorage !== 'undefined') {
@@ -42,26 +54,6 @@
       }
     }
   }
-
-  let isLoggingOut = false;
-
-  $effect(() => {
-    const isAuthenticated = !!page.data.isAuthenticated;
-    const isAdminPage = page.url.pathname.startsWith('/painel_administracao');
-
-    // If authenticated and leaving admin page
-    if (isAuthenticated && !isAdminPage && !isLoggingOut) {
-      isLoggingOut = true;
-      const formData = new FormData();
-      fetch('/logout', { method: 'POST', body: formData })
-        .then(() => {
-          return invalidateAll();
-        })
-        .finally(() => {
-          isLoggingOut = false;
-        });
-    }
-  });
 </script>
 
 {@render children()}

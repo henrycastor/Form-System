@@ -91,7 +91,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         });
     }
 
-    // 2. Server-side Authentication Protection
+    // 2. Server-side Authentication
     const session = event.cookies.get('admin_session');
 
     console.log(`[DEBUG] Session present: ${!!session}`);
@@ -138,6 +138,10 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     // If session exists but we are on login, redirect to admin
+    if (session && event.url.pathname === '/login') {
+        console.log(`[DEBUG] Session exists and navigating to login - redirecting to /painel_administracao`);
+        throw redirect(303, '/painel_administracao');
+    }
 
 
     const response = await resolve(event);
@@ -147,6 +151,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+
+    // Prevent caching for protected routes to ensure back button doesn't bypass auth
+    if (isAdminRoute || isApiSubmissionAdmin) {
+        response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        response.headers.set('Pragma', 'no-cache');
+        response.headers.set('Expires', '0');
+    }
 
     return response;
 };
