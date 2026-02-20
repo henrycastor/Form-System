@@ -54,26 +54,50 @@
         >
           {#if q.type === 'bool'}
             <div class="radio-option-wrapper">
-              <RadioGroup.Item value="true" id="{q.id}-true" class="radio-item" />
+              <RadioGroup.Item value="true" id="{q.id}-true" name={q.id} class="radio-item" />
               <label for="{q.id}-true" class="radio-label">Sim</label>
             </div>
             <div class="radio-option-wrapper">
-              <RadioGroup.Item value="false" id="{q.id}-false" class="radio-item" />
+              <RadioGroup.Item value="false" id="{q.id}-false" name={q.id} class="radio-item" />
               <label for="{q.id}-false" class="radio-label">Não</label>
             </div>
           {:else}
             {#each q.options || [] as option}
               <div class="radio-option-wrapper">
-                <RadioGroup.Item value={option} id="{q.id}-{option}" class="radio-item" />
+                <RadioGroup.Item
+                  value={option}
+                  id="{q.id}-{option}"
+                  name={q.id}
+                  class="radio-item"
+                />
                 <label for="{q.id}-{option}" class="radio-label">{option}</label>
               </div>
             {/each}
           {/if}
         </RadioGroup.Root>
+      {:else if q.type === 'text'}
+        <div class="text-input-container">
+          <input
+            type="text"
+            class="form-control {errors[q.id] ? 'is-invalid' : ''}"
+            id={q.id}
+            name={q.id}
+            value={String(values[q.id] || '')}
+            autocomplete={(q.autocomplete as any) || 'off'}
+            oninput={(e) => {
+              const target = e.target as HTMLInputElement;
+              if (target) {
+                handleValueChange(q.id, target.value);
+              }
+            }}
+            placeholder="Digite sua resposta aqui..."
+          />
+        </div>
       {:else}
         <div class="text-area-container">
           <textarea
             class="form-control {errors[q.id] ? 'is-invalid' : ''}"
+            id={q.id}
             name={q.id}
             rows="3"
             value={String(values[q.id] || '')}
@@ -96,6 +120,7 @@
           >
           <textarea
             id="{q.id}-cmt"
+            name={`${q.id}_cmt`}
             class="form-control form-control-sm"
             rows="2"
             value={comments[`${q.id}_cmt`] || ''}
