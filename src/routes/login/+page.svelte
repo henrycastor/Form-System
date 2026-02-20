@@ -41,7 +41,6 @@
       <div class="form-field">
         <label for="password">Chave de Acesso</label>
         <div class="input-container">
-          <Key class="input-icon" size={20} />
           <input
             type="password"
             name="password"
@@ -50,6 +49,9 @@
             required
             disabled={isLoading}
           />
+          <span class="input-icon">
+            <Key size={20} />
+          </span>
         </div>
         {#if errorMessage}
           <div class="error-toast">
@@ -61,7 +63,9 @@
 
       <button type="submit" class="submit-btn" disabled={isLoading}>
         {#if isLoading}
-          <Loader class="spin" size={20} /> Autenticando...
+          <span class="spin">
+            <Loader size={20} />
+          </span> Autenticando...
         {:else}
           Entrar no Painel <ArrowRight size={18} />
         {/if}
@@ -190,14 +194,14 @@
 
   .input-icon {
     position: absolute;
-    left: 16px;
+    right: 16px;
     color: var(--text-light);
     transition: var(--transition-fast);
   }
 
   input {
     width: 100%;
-    padding: 14px 16px 14px 48px;
+    padding: 14px 48px 14px 16px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     font-size: 1rem;
